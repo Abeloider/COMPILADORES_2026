@@ -1,2 +1,11 @@
+main() {
+    
+// comentario
 x = 2+3*y; 
+// otro comentario
 z= 3*x; 
+z = 3*x;
+print(z,3*7,y);
+
+}
+
