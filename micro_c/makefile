@@ -1,9 +1,9 @@
 lexico : lex.yy.c
 	gcc lex.yy.c -lfl -o lexico
 	
-lex.yy.c : calculadora.l calculadora.h
-	flex calculadora.l
-	
+lex.yy.c : micro_c.l micro_c.h
+	flex micro_c.l
+
 clean :
 	rm -f lex.yy.c lexico
 

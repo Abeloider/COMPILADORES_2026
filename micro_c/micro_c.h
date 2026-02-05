@@ -1,0 +1,16 @@
+#define PYC 1
+#define IDE 2
+#define IGU 3
+#define SUM 4
+#define RES 5
+#define DIV 6
+#define MUL 7
+#define PAI 8
+#define PAD 9
+#define NUM 10
+#define PRI 11
+#define MAI 12
+#define LLI 13
+#define LLD 14
+#define COM 15
+#define CAD 16
