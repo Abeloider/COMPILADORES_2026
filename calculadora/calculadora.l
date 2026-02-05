@@ -28,11 +28,9 @@ D   [0-9]
 "("                 { return PAI; }
 ")"                 { return PAD; }
 {D}+                { return NUM; }
-
 .             { printf("Error: simbolo no reconocido %d %s\n", yylineno, yytext); } 
 
 %%
-
 
 int main(int argc, char *argv[]) {
        int token;
