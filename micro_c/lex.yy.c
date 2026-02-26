@@ -382,13 +382,13 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[70] =
     {   0,
-        0,    0,    0,    0,   33,   30,    1,    1,   29,   14,
-       30,   22,   23,   21,   18,   26,   19,   20,   27,   15,
-       17,   14,   14,   14,   14,   14,   14,   14,   24,   25,
-        4,    4,   31,   29,   28,    0,   14,    3,    2,   27,
-       14,   14,    9,   14,   14,   14,   14,   14,   14,    5,
-        2,   14,   14,    8,   14,   14,    6,   14,   14,   14,
-       10,   14,   12,   13,   14,    7,   14,   11,    0
+        0,    0,    0,    0,   33,   30,    1,    1,   29,   15,
+       30,   22,   23,   21,   18,   26,   19,   20,   27,   16,
+       17,   15,   15,   15,   15,   15,   15,   15,   24,   25,
+        4,    4,   31,   29,   28,    0,   15,    3,    2,   27,
+       15,   15,   10,   15,   15,   15,   15,   15,   15,    5,
+        2,   15,   15,    9,   15,   15,    7,   15,   15,   15,
+       11,   15,   13,   14,   15,    8,    6,   12,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -860,45 +860,50 @@ case YY_STATE_EOF(comentario):
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
+#line 39 "micro_c.l"
+{ return PRI; }                            
+	YY_BREAK
+case 7:
+YY_RULE_SETUP
 #line 40 "micro_c.l"
 { return VAR; }
 	YY_BREAK
-case 7:
+case 8:
 YY_RULE_SETUP
 #line 41 "micro_c.l"
 { return CON; }
 	YY_BREAK
-case 8:
+case 9:
 YY_RULE_SETUP
 #line 42 "micro_c.l"
 { return INT; }
 	YY_BREAK
-case 9:
+case 10:
 YY_RULE_SETUP
 #line 43 "micro_c.l"
 { return IF; }
 	YY_BREAK
-case 10:
+case 11:
 YY_RULE_SETUP
 #line 44 "micro_c.l"
 { return ELS; }
 	YY_BREAK
-case 11:
+case 12:
 YY_RULE_SETUP
 #line 45 "micro_c.l"
 { return WHI; }
 	YY_BREAK
-case 12:
+case 13:
 YY_RULE_SETUP
 #line 46 "micro_c.l"
 { return REA; }
 	YY_BREAK
-case 13:
+case 14:
 YY_RULE_SETUP
 #line 47 "micro_c.l"
 { return VOI; }
 	YY_BREAK
-case 14:
+case 15:
 YY_RULE_SETUP
 #line 49 "micro_c.l"
 { if(yyleng<=32){
@@ -910,69 +915,64 @@ YY_RULE_SETUP
                                  }                            
                             }
 	YY_BREAK
-case 15:
+case 16:
 YY_RULE_SETUP
 #line 58 "micro_c.l"
 { return PYC; } 
 	YY_BREAK
-case 16:
-YY_RULE_SETUP
-#line 59 "micro_c.l"
-{ return PRI; }                            
-	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 60 "micro_c.l"
+#line 59 "micro_c.l"
 { return IGU; } 
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 61 "micro_c.l"
+#line 60 "micro_c.l"
 { return SUM; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 62 "micro_c.l"
+#line 61 "micro_c.l"
 { return RES; } 
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 63 "micro_c.l"
+#line 62 "micro_c.l"
 { return DIV; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 64 "micro_c.l"
+#line 63 "micro_c.l"
 { return MUL; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 65 "micro_c.l"
+#line 64 "micro_c.l"
 { return PAI; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 66 "micro_c.l"
+#line 65 "micro_c.l"
 { return PAD; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 67 "micro_c.l"
+#line 66 "micro_c.l"
 { return LLI; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 68 "micro_c.l"
+#line 67 "micro_c.l"
 { return LLD; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 69 "micro_c.l"
+#line 68 "micro_c.l"
 { return COM; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 71 "micro_c.l"
+#line 70 "micro_c.l"
 { 
                                 long long entero = strtoll(yytext, NULL, 10);
                                 if (entero > MAX_ENTERO) {
@@ -984,30 +984,30 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 79 "micro_c.l"
+#line 78 "micro_c.l"
 { return CAD; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 80 "micro_c.l"
+#line 79 "micro_c.l"
 { printf("Cadena de caracteres no cerrada en línea %d %s\n",
                                         yylineno, yytext); }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 82 "micro_c.l"
+#line 81 "micro_c.l"
 { printf("Error: simbolo no reconocido %d %s\n",
                                         yylineno, yytext); } 
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 85 "micro_c.l"
+#line 84 "micro_c.l"
 { printf("Error en linea %d %s\n",
                                         yylineno, yytext); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 88 "micro_c.l"
+#line 87 "micro_c.l"
 ECHO;
 	YY_BREAK
 #line 1014 "lex.yy.c"
@@ -2027,6 +2027,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 88 "micro_c.l"
+#line 87 "micro_c.l"
 
 
