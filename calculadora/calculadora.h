@@ -9,3 +9,4 @@
 #define PAD 9
 #define NUM 10
 #define PRI 11
+#define REG 12

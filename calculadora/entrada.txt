@@ -1,11 +1,2 @@
-main() {
-    
-// comentario
-x = 2+3*y; 
-// otro comentario
-z= 3*x; 
-z = 3*x;
-print(z,3*7,y);
-
-}
-
+5 + 2 * 3;
+5 * 10;

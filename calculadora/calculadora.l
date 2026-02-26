@@ -1,7 +1,9 @@
 %{
     /*CODIGO VERBATIM básicamente codigo literal en C*/ 
     #include <stdio.h>
-    #include "calculadora.h"
+    #include <stdlib.h>
+    #include "calculadora.tab.h"
+    int errores=0; // hacemos un contador de errores errores++
 
 %}
 
@@ -28,7 +30,9 @@ D   [0-9]
 "("                 { return PAI; }
 ")"                 { return PAD; }
 {D}+                { return NUM; }
-.             { printf("Error: simbolo no reconocido %d %s\n", yylineno, yytext); } 
+"="                 { return IGU; }
+"r"[0-9]            { return REG; }
+.             { printf("Error: simbolo no reconocido %d %s\n", yylineno, yytext); errores++} 
 
 %%
 
