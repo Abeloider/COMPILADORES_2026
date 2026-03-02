@@ -1,0 +1,372 @@
+Gramática
+
+    0 $accept: prog $end
+
+    1 $@1: ε
+
+    2 prog: $@1 line
+
+    3 line: "register" "=" expr ";"
+    4     | line "register" "=" expr ";"
+    5     | error ";"
+
+    6 expr: expr "+" term
+    7     | expr "-" term
+    8     | term
+
+    9 term: term "*" fact
+   10     | term "/" fact
+   11     | fact
+
+   12 fact: "number"
+   13     | "register"
+   14     | "(" expr ")"
+   15     | "-" fact
+
+
+Terminales con las reglas donde aparecen
+
+    $end (0) 0
+    error (256) 5
+    "+" (258) 6
+    "-" (259) 7 15
+    "*" (260) 9
+    "/" (261) 10
+    "number" <num> (262) 12
+    "(" (263) 14
+    ")" (264) 14
+    ";" (265) 3 4 5
+    "=" (266) 3 4
+    "register" <reg> (267) 3 4 13
+
+
+No terminales con las reglas donde aparecen
+
+    $accept (13)
+        on left: 0
+    prog (14)
+        on left: 2
+        on right: 0
+    $@1 (15)
+        on left: 1
+        on right: 2
+    line (16)
+        on left: 3 4 5
+        on right: 2 4
+    expr <num> (17)
+        on left: 6 7 8
+        on right: 3 4 6 7 14
+    term <num> (18)
+        on left: 9 10 11
+        on right: 6 7 8 9 10
+    fact <num> (19)
+        on left: 12 13 14 15
+        on right: 9 10 11 15
+
+
+Estado 0
+
+    0 $accept: • prog $end
+
+    $default  reduce usando la regla 1 ($@1)
+
+    prog  ir al estado 1
+    $@1   ir al estado 2
+
+
+Estado 1
+
+    0 $accept: prog • $end
+
+    $end  desplazar e ir al estado 3
+
+
+Estado 2
+
+    2 prog: $@1 • line
+
+    error       desplazar e ir al estado 4
+    "register"  desplazar e ir al estado 5
+
+    line  ir al estado 6
+
+
+Estado 3
+
+    0 $accept: prog $end •
+
+    $default  aceptar
+
+
+Estado 4
+
+    5 line: error • ";"
+
+    ";"  desplazar e ir al estado 7
+
+
+Estado 5
+
+    3 line: "register" • "=" expr ";"
+
+    "="  desplazar e ir al estado 8
+
+
+Estado 6
+
+    2 prog: $@1 line •
+    4 line: line • "register" "=" expr ";"
+
+    "register"  desplazar e ir al estado 9
+
+    $default  reduce usando la regla 2 (prog)
+
+
+Estado 7
+
+    5 line: error ";" •
+
+    $default  reduce usando la regla 5 (line)
+
+
+Estado 8
+
+    3 line: "register" "=" • expr ";"
+
+    "-"         desplazar e ir al estado 10
+    "number"    desplazar e ir al estado 11
+    "("         desplazar e ir al estado 12
+    "register"  desplazar e ir al estado 13
+
+    expr  ir al estado 14
+    term  ir al estado 15
+    fact  ir al estado 16
+
+
+Estado 9
+
+    4 line: line "register" • "=" expr ";"
+
+    "="  desplazar e ir al estado 17
+
+
+Estado 10
+
+   15 fact: "-" • fact
+
+    "-"         desplazar e ir al estado 10
+    "number"    desplazar e ir al estado 11
+    "("         desplazar e ir al estado 12
+    "register"  desplazar e ir al estado 13
+
+    fact  ir al estado 18
+
+
+Estado 11
+
+   12 fact: "number" •
+
+    $default  reduce usando la regla 12 (fact)
+
+
+Estado 12
+
+   14 fact: "(" • expr ")"
+
+    "-"         desplazar e ir al estado 10
+    "number"    desplazar e ir al estado 11
+    "("         desplazar e ir al estado 12
+    "register"  desplazar e ir al estado 13
+
+    expr  ir al estado 19
+    term  ir al estado 15
+    fact  ir al estado 16
+
+
+Estado 13
+
+   13 fact: "register" •
+
+    $default  reduce usando la regla 13 (fact)
+
+
+Estado 14
+
+    3 line: "register" "=" expr • ";"
+    6 expr: expr • "+" term
+    7     | expr • "-" term
+
+    "+"  desplazar e ir al estado 20
+    "-"  desplazar e ir al estado 21
+    ";"  desplazar e ir al estado 22
+
+
+Estado 15
+
+    8 expr: term •
+    9 term: term • "*" fact
+   10     | term • "/" fact
+
+    "*"  desplazar e ir al estado 23
+    "/"  desplazar e ir al estado 24
+
+    $default  reduce usando la regla 8 (expr)
+
+
+Estado 16
+
+   11 term: fact •
+
+    $default  reduce usando la regla 11 (term)
+
+
+Estado 17
+
+    4 line: line "register" "=" • expr ";"
+
+    "-"         desplazar e ir al estado 10
+    "number"    desplazar e ir al estado 11
+    "("         desplazar e ir al estado 12
+    "register"  desplazar e ir al estado 13
+
+    expr  ir al estado 25
+    term  ir al estado 15
+    fact  ir al estado 16
+
+
+Estado 18
+
+   15 fact: "-" fact •
+
+    $default  reduce usando la regla 15 (fact)
+
+
+Estado 19
+
+    6 expr: expr • "+" term
+    7     | expr • "-" term
+   14 fact: "(" expr • ")"
+
+    "+"  desplazar e ir al estado 20
+    "-"  desplazar e ir al estado 21
+    ")"  desplazar e ir al estado 26
+
+
+Estado 20
+
+    6 expr: expr "+" • term
+
+    "-"         desplazar e ir al estado 10
+    "number"    desplazar e ir al estado 11
+    "("         desplazar e ir al estado 12
+    "register"  desplazar e ir al estado 13
+
+    term  ir al estado 27
+    fact  ir al estado 16
+
+
+Estado 21
+
+    7 expr: expr "-" • term
+
+    "-"         desplazar e ir al estado 10
+    "number"    desplazar e ir al estado 11
+    "("         desplazar e ir al estado 12
+    "register"  desplazar e ir al estado 13
+
+    term  ir al estado 28
+    fact  ir al estado 16
+
+
+Estado 22
+
+    3 line: "register" "=" expr ";" •
+
+    $default  reduce usando la regla 3 (line)
+
+
+Estado 23
+
+    9 term: term "*" • fact
+
+    "-"         desplazar e ir al estado 10
+    "number"    desplazar e ir al estado 11
+    "("         desplazar e ir al estado 12
+    "register"  desplazar e ir al estado 13
+
+    fact  ir al estado 29
+
+
+Estado 24
+
+   10 term: term "/" • fact
+
+    "-"         desplazar e ir al estado 10
+    "number"    desplazar e ir al estado 11
+    "("         desplazar e ir al estado 12
+    "register"  desplazar e ir al estado 13
+
+    fact  ir al estado 30
+
+
+Estado 25
+
+    4 line: line "register" "=" expr • ";"
+    6 expr: expr • "+" term
+    7     | expr • "-" term
+
+    "+"  desplazar e ir al estado 20
+    "-"  desplazar e ir al estado 21
+    ";"  desplazar e ir al estado 31
+
+
+Estado 26
+
+   14 fact: "(" expr ")" •
+
+    $default  reduce usando la regla 14 (fact)
+
+
+Estado 27
+
+    6 expr: expr "+" term •
+    9 term: term • "*" fact
+   10     | term • "/" fact
+
+    "*"  desplazar e ir al estado 23
+    "/"  desplazar e ir al estado 24
+
+    $default  reduce usando la regla 6 (expr)
+
+
+Estado 28
+
+    7 expr: expr "-" term •
+    9 term: term • "*" fact
+   10     | term • "/" fact
+
+    "*"  desplazar e ir al estado 23
+    "/"  desplazar e ir al estado 24
+
+    $default  reduce usando la regla 7 (expr)
+
+
+Estado 29
+
+    9 term: term "*" fact •
+
+    $default  reduce usando la regla 9 (term)
+
+
+Estado 30
+
+   10 term: term "/" fact •
+
+    $default  reduce usando la regla 10 (term)
+
+
+Estado 31
+
+    4 line: line "register" "=" expr ";" •
+
+    $default  reduce usando la regla 4 (line)

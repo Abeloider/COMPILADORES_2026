@@ -1,44 +1,27 @@
 %{
-    /*CODIGO VERBATIM básicamente codigo literal en C*/ 
+    #include "calculadora.tab.h"
     #include <stdio.h>
     #include <stdlib.h>
-    #include "calculadora.tab.h"
-    int errores=0; // hacemos un contador de errores errores++
-
+    int errores = 0;    
 %}
 
-/*DEFINICIONES DE MACROS DE EXPRESIONES REGULARES*/
-
-L   [a-zA-Z]
-D   [0-9]
-/*opciones de flex*/
 %option yylineno
 
+%%
+[ \n\r\t]+  { }
+"+"         { return MAS; }
+"-"         { return MEN; }
+"*"         { return POR; }
+"/"         { return DIV; }
+[0-9]+      { yylval.num = atoi(yytext); return NUM; }
+"("         { return PAI; }
+")"         { return PAD; }
+";"         { return PYC; }
+"="         { return IGU; }
+"r"[0-9]    { yylval.reg = strdup(yytext); return REG; }
+.           { printf("Error lexico en linea %d: %s\n",
+                    yylineno, yytext);
+              errores++;
+            }
 
 %%
-
-[ \t\r\n]     { }
-"//".*        { }
-";"                 { return PYC; } 
-"print"             { return PRI; }
-{L}({L}|{D})*       { return IDE; }
-"="                 { return IGU; }
-"+"                 { return SUM; }
-"-"                 { return RES; } 
-"/"                 { return DIV; }
-"*"                 { return MUL; }
-"("                 { return PAI; }
-")"                 { return PAD; }
-{D}+                { return NUM; }
-"="                 { return IGU; }
-"r"[0-9]            { return REG; }
-.             { printf("Error: simbolo no reconocido %d %s\n", yylineno, yytext); errores++} 
-
-%%
-
-int main(int argc, char *argv[]) {
-       int token;
-        while((token=yylex()) != 0) {
-            printf("Token: <%d, %s>\n", token, yytext);
-    }
-}
