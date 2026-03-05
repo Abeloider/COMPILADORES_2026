@@ -1,11 +1,11 @@
 lexico : lex.yy.c
 	gcc lex.yy.c -lfl -o lexico
 	
-lex.yy.c : micro_c.l micro_c.h
-	flex micro_c.l
+lex.yy.c : mini.l mimini
+	flex mini.l
 
 clean :
 	rm -f lex.yy.c lexico
 
 run : lexico
-	./lexico < entrada.txt
+	./lexico < prueba.txt

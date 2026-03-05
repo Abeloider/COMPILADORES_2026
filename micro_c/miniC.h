@@ -21,3 +21,5 @@
 #define ELS 21
 #define WHI 22
 #define REA 23
+#define PRINT 24
+#define STRING 25
