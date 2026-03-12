@@ -1,27 +1,32 @@
 %{
-    #include <stdio.h>
-    #include <stdlib.h>
-    extern int yylex();
-    extern int yylineno;
-    extern int errores;
-    void yyerror(const char *msg);
-    int regs[10];    
-    void write_reg(char *reg, int value);
-    int read_reg(char *reg);
-    void print_regs();
-    void init_regs();
+     #include <stdio.h>
+     #include <stdlib.h>
+     #include "listaSimbolos.h"
+     extern int yylex();
+     extern int yylineno;
+     extern int errores;
+     // funcion de error
+     void yyerror(const char *msg);
+     // lista simbolos 
+     Lista l; 
+     /*declaracion de la lista de simbolos*/
+     void declarar_id(char *id, Tipo t); 
+     void imprimirLS();
+     //variable para deteerminar si el id es VAR o CONST 
+     Tipo t;
+
 %}
 
 %union {
   int num;
-  char *reg;
+  char *cadena;
 }
 
 %token MAS "+"
 %token MEN "-"
 %token POR "*"
 %token DIV "/"
-%token <num> NUM "number"
+%token <cadena> NUM "number"
 %token PAI "("
 %token PAD ")"
 %token PYC ";"
@@ -29,22 +34,22 @@
 %token LLI "{"
 %token LLD "}"
 %token COM ","
-%token <reg> REG "register"
-%token PRI "print"
+%token <cadena> REG "register"
+%token PRINT "print"
 %token VAR "var"
-%token CON "const"
+%token CONST "const"
 %token INT "int"
 %token IF "if"
-%token ELS "else"
-%token WHI "while"
-%token REA "read"
-%token VOI "void"
+%token ELSE "else"
+%token WHILE "while"
+%token READ "read"
+%token VOID "void"
 %token STRING "string"
-%token <reg> ID "identifier"
+%token <cadena> ID "identifier"
 
 
 /* Tipo de dato de los no terminales de la gramática */
-%type <num> expr
+%type <num> expression
 
 /* Asociatividad y precedencia 
      % left asociatividad izquierda 
@@ -69,15 +74,24 @@
 /* Activar trazas */
 %define parse.trace
 
-/* Hay un conflicto d/r en if-ifelse */
-%except 
+
+
+/*Evitar el warning de if / if-else
+Por defecto bison desplaza en el conflicto d/r
+y lo resuelve de este modo correctamente*/
+
+// %expect 1
+
 
 %%
 
 
-
-prog : { init_regs(); } line { print_regs(); }
-     ;
+program : {l = creaLS(); }
+           VOID ID "(" ")" "{" body "}"
+           {if (errores ==0) {
+               imprimirLS();}
+           liberaLS(l);}
+          ;
 
 
 body : body declaration
@@ -85,26 +99,31 @@ body : body declaration
      | %empty
      ;
 
-declaration : "var" tipo id_list ";" 
-            | "const" tipo id_list ";"
+declaration : VAR {t = VARIABLE;} id_list ";" 
+            | CONST {t = CONSTANTE;} tipo id_list ";"
             ;
             
-tipo : "INT" 
+tipo : INT
 
 id_list : id_decl 
         | id_list "," id_decl 
         ;
-id_decl : ID
-        | ID "=" expression 
+id_decl : ID {
+             // declaramso una funcion con dos parametros 
+             declarar_id($1,t); 
+          }
+        | ID "=" expression {
+          declarar_id($1,t); 
+          }
         ;
 
-statement : ID "=" expresion ";"
+statement : ID "=" expression ";"
           | "{" statement_list "}"
-          | IF "(" expression ")" statement ELS statement
+          | IF "(" expression ")" statement ELSE statement
           | IF "(" expression ")" statement %prec NOELSE
           | WHILE "(" expression ")" statement
           | PRINT "(" print_list ")" ";"
-          | READ "(" read_list ")" ";"
+          | READ "(" REA_list ")" ";"
           | error ";"
 ;
 
@@ -119,49 +138,21 @@ print_list : print_item
 print_item : expression 
           | STRING
           ; 
-read_list : ID
-          | read_list "," ID
+REA_list : ID
+          | REA_list "," ID
           ;
 
 expression : expression "+" expression {}
            | expression "-" expression {}
            | expression "*" expression {}
            | expression "/" expression {}
-           | "-" expression %prec UMINUS
-           | "(" expression ")"
-           | ID
-           | NUM
+           | "-" expression %prec UMINUS {}
+           | "(" expression ")" {}
+           | ID {}
+           | NUM {}
            ;
 
 
-
-line : REG "=" expr ";" { printf("L->R[%s]=E;\n", $1);  
-                              write_reg($1,$3);
-                        }
-     | line REG "=" expr ";" { printf("L->L R[%s]=E;\n", $2);
-                              write_reg($2,$4);
-                        }
-     | error ";"     {  }
-     ;
-
-expr : expr "+" expr { printf("E->E+E\n"); $$ = $1+$3; }
-     | expr "-" expr { printf("E->E-E\n"); $$ = $1-$3; }
-     | expr          { printf("E->E\n"); $$ = $1; }  
-     | expr "*" expr { printf("T->T*F\n"); $$ = $1 * $3; }
-     | expr "/" expr { printf("T->T/F\n"); 
-                       if ($3 == 0) {
-                         printf("División por 0 en linea %d\n",
-                                yylineno);
-                         exit(1);
-                       }
-                       $$ = $1 / $3;
-                     }
-     | expr          { printf("T->F\n"); $$ = $1; }
-     | NUM           { printf("E->num (%d)\n", $1); $$ = $1; }
-     | REG           { printf("E->REG\n"); $$ = read_reg($1); }
-     | "(" expr ")"  { printf("E->(E)\n"); $$ = $2; }
-     | "-" expr %prec UMINUS { printf("E->-F\n");  $$ = -$2; }
-     ;
 %%
 
 void yyerror(const char *msg) {
@@ -169,24 +160,28 @@ void yyerror(const char *msg) {
     errores++;
 }
 
-void write_reg(char *reg, int value) {
-     // reg = "r[0-9]"
-     int idx = reg[1] - '0';
-     regs[idx] = value;
-}
-
-int read_reg(char *reg) {
-     int idx = reg[1] - '0';
-     return regs[idx];
-}
-
-void print_regs() {
-     for (int i = 0; i < 10; i++) {
-          printf("r%d = %d\n", i, regs[i]);
+void declarar_id(char *id, Tipo t) {
+     PosicionLista p = buscaLS(l, id);
+     if (p != finalLS(l)) {
+          printf ("error en linea %d: %s redeclarado\n", yylineno, id);
+          errores++;
+     }
+     else {
+          Simbolo s;
+          s.nombre = id; 
+          s.valor = 0;
+          s.tipo = t;
+          insertaLS(l, finalLS(l), s);
      }
 }
 
-void init_regs() {
-     for (int i = 0; i < 10; i++) 
-          regs[i] = 0;
+void imprimirLS() {
+     printf(".data\n");
+     PosicionLista p = inicioLS(l);
+     while (p != finalLS(l)) {
+          Simbolo aux = recuperaLS(l, p);
+          // el guion bajo es para evitar problemas con nombres de variables que no son validos en ensamblador
+          printf("_%s: .word %d\n", aux.nombre, aux.valor);
+          p = siguienteLS(l, p);
+     }
 }

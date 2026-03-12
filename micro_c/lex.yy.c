@@ -513,12 +513,12 @@ static int yy_more_len = 0;
 #define YY_MORE_ADJ (yy_more_len)
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "micro_c.l"
-#line 2 "micro_c.l"
+#line 1 "miniC.l"
+#line 2 "miniC.l"
     /*CODIGO VERBATIM básicamente codigo literal en C*/ 
     #include <stdio.h>
     #include <stdlib.h>
-    #include "micro_c.h"
+    #include "miniC.tab.h"
     
     int inicio_comentario = 0;
     int errores=0; // hacemos un contador de errores errores++ 
@@ -747,7 +747,7 @@ YY_DECL
 		}
 
 	{
-#line 25 "micro_c.l"
+#line 25 "miniC.l"
 
 
 #line 754 "lex.yy.c"
@@ -826,33 +826,33 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 27 "micro_c.l"
+#line 27 "miniC.l"
 { }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 28 "micro_c.l"
+#line 28 "miniC.l"
 { }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 29 "micro_c.l"
+#line 29 "miniC.l"
 { BEGIN (comentario);
                             inicio_comentario = yylineno; }
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 31 "micro_c.l"
+#line 31 "miniC.l"
 { yymore(); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 32 "micro_c.l"
+#line 32 "miniC.l"
 { BEGIN (INITIAL); }
 	YY_BREAK
 case YY_STATE_EOF(comentario):
-#line 33 "micro_c.l"
+#line 33 "miniC.l"
 { printf("Error: comentario desde %d sin cerrar al final\n",
                                 inicio_comentario);
                              return 0; 
@@ -860,157 +860,161 @@ case YY_STATE_EOF(comentario):
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 39 "micro_c.l"
-{ return PRI; }                            
+#line 39 "miniC.l"
+{ return PRINT; }                            
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 40 "micro_c.l"
+#line 40 "miniC.l"
 { return VAR; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 41 "micro_c.l"
-{ return CON; }
+#line 41 "miniC.l"
+{ return CONST; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 42 "micro_c.l"
+#line 42 "miniC.l"
 { return INT; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 43 "micro_c.l"
+#line 43 "miniC.l"
 { return IF; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 44 "micro_c.l"
-{ return ELS; }
+#line 44 "miniC.l"
+{ return ELSE; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 45 "micro_c.l"
-{ return WHI; }
+#line 45 "miniC.l"
+{ return WHILE; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 46 "micro_c.l"
-{ return REA; }
+#line 46 "miniC.l"
+{ return READ; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 47 "micro_c.l"
-{ return VOI; }
+#line 47 "miniC.l"
+{ return VOID; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 49 "micro_c.l"
+#line 49 "miniC.l"
 { if(yyleng<=32){
                                 printf("Identificador %d\n", yyleng);
-                                return IDE;
+                                return ID;
                                 } else {
                                     printf("Error léxico: identificador demasiado largo en linea %d\n", yylineno);
                                     errores++; 
-                                 }                            
+                                 }     
+                                 yylval.cadena = strdup(yytext);
+                                 return ID;                        
                             }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 58 "micro_c.l"
+#line 60 "miniC.l"
 { return PYC; } 
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 59 "micro_c.l"
+#line 61 "miniC.l"
 { return IGU; } 
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 60 "micro_c.l"
-{ return SUM; }
+#line 62 "miniC.l"
+{ return MAS; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 61 "micro_c.l"
-{ return RES; } 
+#line 63 "miniC.l"
+{ return MEN; } 
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 62 "micro_c.l"
+#line 64 "miniC.l"
 { return DIV; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 63 "micro_c.l"
-{ return MUL; }
+#line 65 "miniC.l"
+{ return POR; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 64 "micro_c.l"
+#line 66 "miniC.l"
 { return PAI; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 65 "micro_c.l"
+#line 67 "miniC.l"
 { return PAD; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 66 "micro_c.l"
+#line 68 "miniC.l"
 { return LLI; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 67 "micro_c.l"
+#line 69 "miniC.l"
 { return LLD; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 68 "micro_c.l"
+#line 70 "miniC.l"
 { return COM; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 70 "micro_c.l"
+#line 72 "miniC.l"
 { 
                                 long long entero = strtoll(yytext, NULL, 10);
                                 if (entero > MAX_ENTERO) {
                                     printf("Entero %s muy grande en la linea %d|\n",yytext ,yylineno);
                                 }
-                                printf("Entero: %lld\n", entero);
+                                yylval.cadena = strdup(yytext);
                                 return NUM; 
  }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 78 "micro_c.l"
-{ return CAD; }
+#line 81 "miniC.l"
+{ 
+                                 yylval.cadena = strdup(yytext);
+                                 return STRING; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 79 "micro_c.l"
+#line 84 "miniC.l"
 { printf("Cadena de caracteres no cerrada en línea %d %s\n",
                                         yylineno, yytext); }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 81 "micro_c.l"
+#line 86 "miniC.l"
 { printf("Error: simbolo no reconocido %d %s\n",
                                         yylineno, yytext); } 
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 84 "micro_c.l"
+#line 89 "miniC.l"
 { printf("Error en linea %d %s\n",
                                         yylineno, yytext); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 87 "micro_c.l"
+#line 92 "miniC.l"
 ECHO;
 	YY_BREAK
-#line 1014 "lex.yy.c"
+#line 1018 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2027,6 +2031,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 87 "micro_c.l"
+#line 92 "miniC.l"
 
 

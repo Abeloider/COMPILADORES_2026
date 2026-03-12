@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 extern char *yytext; 
-extern int yylex(); 
+extern int yyparse(); 
 extern FILE *yyin; 
 
 
@@ -18,7 +18,8 @@ int main(int argc, char *argv[]) {
             printf("No se puede abrir %s\n el archivo", argv[1]);   
             exit(2);
         }
-        while((token=yylex()) != 0) {
-            printf("Token: <%d, %s>\n", token, yytext);
-    }
+        // while((token=yylex()) != 0) {
+        yyparse();
+           // printf("Token: <%d, %s>\n", token, yytext);
+   // }
 }

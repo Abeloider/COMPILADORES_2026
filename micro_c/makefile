@@ -1,11 +1,14 @@
-lexico : lex.yy.c
-	gcc lex.yy.c -lfl -o lexico
-	
-lex.yy.c : mini.l mimini
-	flex mini.l
+minic : lex.yy.c miniC.tab.c listaSimbolos.c main.c
+	gcc lex.yy.c miniC.tab.c listaSimbolos.c main.c -lfl -o minic
+
+miniC.tab.c miniC.tab.h : miniC.y
+	bison -d miniC.y
+
+lex.yy.c : miniC.l miniC.tab.h
+	flex miniC.l
 
 clean :
-	rm -f lex.yy.c lexico
+	rm -f lex.yy.c miniC.tab.c miniC.tab.h minic
 
-run : lexico
-	./lexico < prueba.txt
+run : minic
+	./minic prueba.txt
