@@ -370,3 +370,4 @@ Estado 31
     4 line: line "register" "=" expr ";" •
 
     $default  reduce usando la regla 4 (line)
+    

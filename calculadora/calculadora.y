@@ -29,14 +29,38 @@
 %token <reg> REG "register"
 
 /* Tipo de dato de los no terminales de la gramática */
-%type <num> expr term fact
+%type <num> expr
 
+/* Asociatividad y precedencia 
+     % left asociatividad izquierda 
+     % right asociatividad derecha
+     %nonasoc: no debe tener asociatividad 2+2+2 (error sintac)
+     Misma precedencia y asociatividad en la misma linea
+     Mayor precedencia en lineas sucesivas/inferiores
+
+     %precedence: solo define preferencia no asociatividad
+*/
+%left "+" "-"
+%left "*" "/"
+%precedence UMINUS
+
+/* Resolucion de conflicto if if-else */
+%precedence NOELSE
+%precedence ELSE
+
+/* Activar mensajes de error detallados */
 %define parse.error verbose
+
+/* Activar trazas */
+%define parse.trace
+
+/* Hay un conflicto d/r en if-ifelse */
+%except 
 
 %%
 
-prog : { init_regs(); } line { print_regs(); }
-     ;
+program : { init_regs(); } line { print_regs(); }
+        ;
 
 line : REG "=" expr ";" { printf("L->R[%s]=E;\n", $1);  
                               write_reg($1,$3);
@@ -47,13 +71,11 @@ line : REG "=" expr ";" { printf("L->R[%s]=E;\n", $1);
      | error ";"     {  }
      ;
 
-expr : expr "+" term { printf("E->E+T\n"); $$ = $1+$3; }
-     | expr "-" term { printf("E->E-T\n"); $$ = $1-$3; }
-     | term          { printf("E->T\n"); $$ = $1; }
-     ;
-
-term : term "*" fact { printf("T->T*F\n"); $$ = $1 * $3; }
-     | term "/" fact { printf("T->T/F\n"); 
+expr : expr "+" expr { printf("E->E+E\n"); $$ = $1+$3; }
+     | expr "-" expr { printf("E->E-E\n"); $$ = $1-$3; }
+     | expr          { printf("E->E\n"); $$ = $1; }  
+     | expr "*" expr { printf("T->T*F\n"); $$ = $1 * $3; }
+     | expr "/" expr { printf("T->T/F\n"); 
                        if ($3 == 0) {
                          printf("División por 0 en linea %d\n",
                                 yylineno);
@@ -61,13 +83,11 @@ term : term "*" fact { printf("T->T*F\n"); $$ = $1 * $3; }
                        }
                        $$ = $1 / $3;
                      }
-     | fact          { printf("T->F\n"); $$ = $1; }
-     ;
-
-fact : NUM           { printf("F->num (%d)\n", $1); $$ = $1; }
-     | REG           { printf("F->REG\n"); $$ = read_reg($1); }
-     | "(" expr ")"  { printf("F->(E)\n"); $$ = $2; }
-     | "-" fact      { printf("F->-F\n");  $$ = -$2; }
+     | expr          { printf("T->F\n"); $$ = $1; }
+     | NUM           { printf("E->num (%d)\n", $1); $$ = $1; }
+     | REG           { printf("E->REG\n"); $$ = read_reg($1); }
+     | "(" expr ")"  { printf("E->(E)\n"); $$ = $2; }
+     | "-" expr %prec UMINUS { printf("E->-F\n");  $$ = -$2; }
      ;
 %%
 
