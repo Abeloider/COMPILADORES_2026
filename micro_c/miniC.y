@@ -1,6 +1,7 @@
 %{
      #include <stdio.h>
      #include <stdlib.h>
+     #include <string.h>
      #include "listaSimbolos.h"
      extern int yylex();
      extern int yylineno;
@@ -74,8 +75,6 @@
 /* Activar trazas */
 %define parse.trace
 
-
-
 /*Evitar el warning de if / if-else
 Por defecto bison desplaza en el conflicto d/r
 y lo resuelve de este modo correctamente*/
@@ -87,7 +86,12 @@ y lo resuelve de este modo correctamente*/
 
 
 program : {l = creaLS(); }
-           VOID ID "(" ")" "{" body "}"
+           VOID ID "(" ")" "{" body "}" { // comprobamos que el id es main
+               if (strcmp($3, "main") != 0) {
+                   printf("Error en linea %d: la funcion debe llamarse 'main'\n", yylineno);
+                   errores++;
+               }
+           }
            {if (errores ==0) {
                imprimirLS();}
            liberaLS(l);}
@@ -99,7 +103,7 @@ body : body declaration
      | %empty
      ;
 
-declaration : VAR {t = VARIABLE;} id_list ";" 
+declaration : VAR {t = VARIABLE;} tipo id_list ";" 
             | CONST {t = CONSTANTE;} tipo id_list ";"
             ;
             
@@ -117,13 +121,26 @@ id_decl : ID {
           }
         ;
 
-statement : ID "=" expression ";"
+statement : ID "=" expression ";" {
+                PosicionLista p = buscaLS(l, $1);
+                // comprobamos que el id existe y no es una constante
+                if (p == finalLS(l)) {
+                    printf("Error en linea %d: %s no declarado\n", yylineno, $1);
+                    errores++;
+                } else {
+                    Simbolo s = recuperaLS(l, p);
+                    if (s.tipo == CONSTANTE) {
+                        printf("Error en linea %d: %s es una constante\n", yylineno, $1);
+                        errores++;
+                    }
+                }
+            }
           | "{" statement_list "}"
           | IF "(" expression ")" statement ELSE statement
           | IF "(" expression ")" statement %prec NOELSE
           | WHILE "(" expression ")" statement
           | PRINT "(" print_list ")" ";"
-          | READ "(" REA_list ")" ";"
+          | READ "(" read_list ")" ";"
           | error ";"
 ;
 
@@ -138,17 +155,49 @@ print_list : print_item
 print_item : expression 
           | STRING
           ; 
-REA_list : ID
-          | REA_list "," ID
+read_list : ID { 
+                PosicionLista p = buscaLS(l, $1);
+                if (p == finalLS(l)) {
+                    printf("Error en linea %d: %s no declarado\n", yylineno, $1);
+                    errores++;
+                } else {
+                    Simbolo s = recuperaLS(l, p);
+                    if (s.tipo == CONSTANTE) {
+                        printf("Error en linea %d: %s es una constante\n", yylineno, $1);
+                        errores++;
+                    }
+                }
+            }
+          | read_list "," ID {
+               // comprobamos que el id existe y no es una constante
+                PosicionLista p = buscaLS(l, $3);
+                if (p == finalLS(l)) {
+                    printf("Error en linea %d: %s no declarado\n", yylineno, $3);
+                    errores++;
+                } else {
+                    Simbolo s = recuperaLS(l, p);
+                    if (s.tipo == CONSTANTE) {
+                        printf("Error en linea %d: %s es una constante\n", yylineno, $3);
+                        errores++;
+                    }
+                }
+            }
           ;
 
 expression : expression "+" expression {}
            | expression "-" expression {}
            | expression "*" expression {}
-           | expression "/" expression {}
+           | expression "/" expression {}                                   
            | "-" expression %prec UMINUS {}
            | "(" expression ")" {}
-           | ID {}
+           | ID {
+               // comprobamos que el id existe y no es una constante
+                PosicionLista p = buscaLS(l, $1);
+                if (p == finalLS(l)) {
+                    printf("Error en linea %d: %s no declarado\n", yylineno, $1);
+                    errores++;
+                }
+            }
            | NUM {}
            ;
 

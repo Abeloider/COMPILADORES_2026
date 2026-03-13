@@ -1,10 +1,13 @@
-{
-//comentario linea
-/*
-comentario varias lineas
-*/
-
-/*comentario sin cerrar */
-
-int p=5;
+void main() {
+const int a=0, b=0;
+print ("Inicio del programa\n");
+var int c = 5+2-2;
+if (a)  print ("a","\n");
+  else if (b) print ("No a y b\n");
+       else while (c)
+            {
+                  print ("c = ",c,"\n");
+                  b = c-2+1;
+            }
+  print ("Final","\n");
 }

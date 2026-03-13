@@ -6,7 +6,7 @@
     
     int inicio_comentario = 0;
     int errores=0; // hacemos un contador de errores errores++ 
-    int MAX_ENTERO = 2147483648; 
+    long long MAX_ENTERO = 2147483648L; 
 
 %}
 
@@ -47,12 +47,12 @@ panico [^a-zA-Z_$'0-9'\.*/ \t\n\r"(){}]+
 "void"                        { return VOID; }
 
 {L}({L}|{D})*               { if(yyleng<=32){
-                                printf("Identificador %d\n", yyleng);
+                                yylval.cadena = strdup(yytext);
                                 return ID;
                                 } else {
                                     printf("Error léxico: identificador demasiado largo en linea %d\n", yylineno);
                                     errores++; 
-                                 }     
+                                 }
                                  yylval.cadena = strdup(yytext);
                                  return ID;                        
                             }

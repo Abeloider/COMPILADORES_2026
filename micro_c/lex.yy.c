@@ -522,7 +522,7 @@ char *yytext;
     
     int inicio_comentario = 0;
     int errores=0; // hacemos un contador de errores errores++ 
-    int MAX_ENTERO = 2147483648; 
+    long long MAX_ENTERO = 2147483648L; 
 
 #line 528 "lex.yy.c"
 /*DEFINICIONES DE MACROS DE EXPRESIONES REGULARES*/
@@ -907,12 +907,12 @@ case 15:
 YY_RULE_SETUP
 #line 49 "miniC.l"
 { if(yyleng<=32){
-                                printf("Identificador %d\n", yyleng);
+                                yylval.cadena = strdup(yytext);
                                 return ID;
                                 } else {
                                     printf("Error léxico: identificador demasiado largo en linea %d\n", yylineno);
                                     errores++; 
-                                 }     
+                                 }
                                  yylval.cadena = strdup(yytext);
                                  return ID;                        
                             }
