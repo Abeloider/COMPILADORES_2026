@@ -74,8 +74,8 @@ line : REG "=" expr ";" { printf("L->R[%s]=E;\n", $1);
 expr : expr "+" expr { printf("E->E+E\n"); $$ = $1+$3; }
      | expr "-" expr { printf("E->E-E\n"); $$ = $1-$3; }
      | expr          { printf("E->E\n"); $$ = $1; }  
-     | expr "*" expr { printf("T->T*F\n"); $$ = $1 * $3; }
-     | expr "/" expr { printf("T->T/F\n"); 
+     | expr "*" expr { printf("E->E*E\n"); $$ = $1 * $3; }
+     | expr "/" expr { printf("E->E/E\n"); 
                        if ($3 == 0) {
                          printf("División por 0 en linea %d\n",
                                 yylineno);

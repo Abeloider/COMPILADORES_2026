@@ -1,5 +1,5 @@
-minic : lex.yy.c miniC.tab.c listaSimbolos.c main.c
-	gcc -g lex.yy.c miniC.tab.c listaSimbolos.c main.c -lfl -o minic
+minic : lex.yy.c miniC.tab.c listaSimbolos.c listaCodigo.c main.c
+	gcc -g lex.yy.c miniC.tab.c listaSimbolos.c listaCodigo.c main.c -lfl -o minic
 
 miniC.tab.c miniC.tab.h : miniC.y
 	bison -d -v miniC.y

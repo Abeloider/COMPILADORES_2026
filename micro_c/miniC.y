@@ -1,8 +1,12 @@
 %{
+     #define _GNU_SOURCE
      #include <stdio.h>
      #include <stdlib.h>
      #include <string.h>
+     #include <stdbool.h>
+     #include <assert.h>
      #include "listaSimbolos.h"
+     #include "listaCodigo.h"
      extern int yylex();
      extern int yylineno;
      extern int errores;
@@ -16,12 +20,26 @@
      //variable para deteerminar si el id es VAR o CONST 
      Tipo t;
 
+     bool registros[10];
+     void inicializaRegs();
+     char *obtenerReg();
+     void liberarReg(char *reg);
+     ListaC expresion_num(char *num);
+     ListaC expresion_id (char *id);
+     ListaC expresion_bin(char *op, ListaC expr1, ListaC expr2);
+
 %}
+
+%code requires{
+    #include "listacodigo.h"
+}
 
 %union {
   int num;
+  ListaC codigo;
   char *cadena;
 }
+
 
 %token MAS "+"
 %token MEN "-"
@@ -113,7 +131,7 @@ id_list : id_decl
         | id_list "," id_decl 
         ;
 id_decl : ID {
-             // declaramso una funcion con dos parametros 
+             // declaramos una funcion con dos parametros
              declarar_id($1,t); 
           }
         | ID "=" expression {
@@ -184,10 +202,10 @@ read_list : ID {
             }
           ;
 
-expression : expression "+" expression {}
-           | expression "-" expression {}
-           | expression "*" expression {}
-           | expression "/" expression {}                                   
+expression : expression "+" expression {$$=expresion_bin("add", $1,$3);}
+           | expression "-" expression {$$=expresion_bin("res", $1,$3);}
+           | expression "*" expression {$$=expresion_bin("sum", $1,$3);}
+           | expression "/" expression {$$=expresion_bin("div", $1,$3);}                                   
            | "-" expression %prec UMINUS {}
            | "(" expression ")" {}
            | ID {
@@ -233,4 +251,86 @@ void imprimirLS() {
           printf("_%s: .word %d\n", aux.nombre, aux.valor);
           p = siguienteLS(l, p);
      }
+}
+
+void inicializaRegs(){
+    for(int i=0; i<10; i++) 
+        registros[i] = false; 
+}
+
+char *obtenerReg(){
+    //buscar registro $tx libre
+    for(int i=0; i<10; i++){
+        if(registros[i]=false){
+            registros[i]=true;
+            char *reg;
+            asprintf(&reg, "$t%d", i);
+            return reg;
+        }
+    }
+    printf("Error: registros agotados\n");
+    exit(1);
+}
+void liberarReg(char *reg){
+    //reg == &tx
+    assert(reg[0] == '$');
+    assert(reg[1] == 't');
+    int idx = reg[2] - '0';
+    assert (idx >=0); 
+    assert (idx <=0); 
+    registros[idx] = false;  
+}
+
+ListaC expresion_num(char*num) {
+    ListaC codigo = creaLC();
+    Operacion o; 
+    o.op = "li"; 
+    o.res = obtenerReg(); 
+    o.arg1 = num; 
+    o.arg2 = NULL; 
+    insertaLC(codigo, finalLC(codigo),o); 
+    guardaResLC(codigo,o.res); 
+    return codigo; 
+}
+
+ListaC expresion_id(char*id) {
+    ListaC codigo = creaLC();
+    Operacion o; 
+    o.op = "lw"; 
+    o.res = obtenerReg(); 
+    asprintf(&(o.arg1), "_%s", id);
+    o.arg1 = id; 
+    o.arg2 = NULL; 
+    insertaLC(codigo, finalLC(codigo),o); 
+    guardaResLC(codigo,o.res); 
+    return codigo; 
+}
+
+ListaC expression_bin(char *op, ListaC expr1, ListaC expr2) {
+   ListaC codigo; 
+   codigo = expr1; 
+   concatenaLC(codigo, expr2);
+   Operacion o;
+   o.op=op;
+   o.res = recuperaResLC(expr1); 
+   o.arg1= recuperaResLC(expr1); 
+   o.arg2= recuperaResLC(expr2); 
+   insertaLC(codigo, finalLC(codigo),o); 
+   liberarReg(o.arg2);
+   return codigo; 
+}
+
+void imprimir_lc(ListaC codigo1){
+    PosicionListaC p = inicioLC(codigo1);
+    Operacion oper; 
+    while(p!=finalLC(codigo1)){
+        oper=recuperaLC(codigo1,p);
+        printf("%s", oper.op);
+        if(oper.res) printf(" %s", oper.res);
+        if(oper.arg1) printf(" %s", oper.arg1);
+        if(oper.arg2) printf(" %s", oper.arg2);
+        printf("\n");
+        p=siguienteLC(codigo1,p);
+        
+    }
 }

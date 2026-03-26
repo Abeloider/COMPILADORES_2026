@@ -69,10 +69,14 @@
 /* First part of user prologue.  */
 #line 1 "miniC.y"
 
+     #define _GNU_SOURCE
      #include <stdio.h>
      #include <stdlib.h>
      #include <string.h>
+     #include <stdbool.h>
+     #include <assert.h>
      #include "listaSimbolos.h"
+     #include "listaCodigo.h"
      extern int yylex();
      extern int yylineno;
      extern int errores;
@@ -86,8 +90,16 @@
      //variable para deteerminar si el id es VAR o CONST 
      Tipo t;
 
+     bool registros[10];
+     void inicializaRegs();
+     char *obtenerReg();
+     void liberarReg(char *reg);
+     ListaC expresion_num(char *num);
+     ListaC expresion_id (char *id);
+     ListaC expresion_bin(char *op, ListaC expr1, ListaC expr2);
 
-#line 91 "miniC.tab.c"
+
+#line 103 "miniC.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -549,11 +561,11 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    88,    88,    89,    88,   101,   102,   103,   106,   106,
-     107,   107,   110,   112,   113,   115,   119,   124,   138,   139,
-     140,   141,   142,   143,   144,   147,   148,   151,   152,   155,
-     156,   158,   171,   187,   188,   189,   190,   191,   192,   193,
-     201
+       0,   106,   106,   107,   106,   119,   120,   121,   124,   124,
+     125,   125,   128,   130,   131,   133,   137,   142,   156,   157,
+     158,   159,   160,   161,   162,   165,   166,   169,   170,   173,
+     174,   176,   189,   205,   206,   207,   208,   209,   210,   211,
+     219
 };
 #endif
 
@@ -1440,61 +1452,61 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* $@1: %empty  */
-#line 88 "miniC.y"
+#line 106 "miniC.y"
           {l = creaLS(); }
-#line 1446 "miniC.tab.c"
+#line 1458 "miniC.tab.c"
     break;
 
   case 3: /* $@2: %empty  */
-#line 89 "miniC.y"
+#line 107 "miniC.y"
                                         { // comprobamos que el id es main
                if (strcmp((yyvsp[-5].cadena), "main") != 0) {
                    printf("Error en linea %d: la funcion debe llamarse 'main'\n", yylineno);
                    errores++;
                }
            }
-#line 1457 "miniC.tab.c"
+#line 1469 "miniC.tab.c"
     break;
 
   case 4: /* program: $@1 "void" "identifier" "(" ")" "{" body "}" $@2  */
-#line 95 "miniC.y"
+#line 113 "miniC.y"
            {if (errores ==0) {
                imprimirLS();}
            liberaLS(l);}
-#line 1465 "miniC.tab.c"
-    break;
-
-  case 8: /* $@3: %empty  */
-#line 106 "miniC.y"
-                  {t = VARIABLE;}
-#line 1471 "miniC.tab.c"
-    break;
-
-  case 10: /* $@4: %empty  */
-#line 107 "miniC.y"
-                    {t = CONSTANTE;}
 #line 1477 "miniC.tab.c"
     break;
 
+  case 8: /* $@3: %empty  */
+#line 124 "miniC.y"
+                  {t = VARIABLE;}
+#line 1483 "miniC.tab.c"
+    break;
+
+  case 10: /* $@4: %empty  */
+#line 125 "miniC.y"
+                    {t = CONSTANTE;}
+#line 1489 "miniC.tab.c"
+    break;
+
   case 15: /* id_decl: "identifier"  */
-#line 115 "miniC.y"
+#line 133 "miniC.y"
              {
-             // declaramso una funcion con dos parametros 
+             // declaramos una funcion con dos parametros
              declarar_id((yyvsp[0].cadena),t); 
           }
-#line 1486 "miniC.tab.c"
+#line 1498 "miniC.tab.c"
     break;
 
   case 16: /* id_decl: "identifier" "=" expression  */
-#line 119 "miniC.y"
+#line 137 "miniC.y"
                             {
           declarar_id((yyvsp[-2].cadena),t); 
           }
-#line 1494 "miniC.tab.c"
+#line 1506 "miniC.tab.c"
     break;
 
   case 17: /* statement: "identifier" "=" expression ";"  */
-#line 124 "miniC.y"
+#line 142 "miniC.y"
                                   {
                 PosicionLista p = buscaLS(l, (yyvsp[-3].cadena));
                 // comprobamos que el id existe y no es una constante
@@ -1504,16 +1516,16 @@ yyreduce:
                 } else {
                     Simbolo s = recuperaLS(l, p);
                     if (s.tipo == CONSTANTE) {
-                        printf("Error en linea %d: %s es una constante\n", yylineno);
+                        printf("Error en linea %d: %s es una constante\n", yylineno, (yyvsp[-3].cadena));
                         errores++;
                     }
                 }
             }
-#line 1513 "miniC.tab.c"
+#line 1525 "miniC.tab.c"
     break;
 
   case 31: /* read_list: "identifier"  */
-#line 158 "miniC.y"
+#line 176 "miniC.y"
                { 
                 PosicionLista p = buscaLS(l, (yyvsp[0].cadena));
                 if (p == finalLS(l)) {
@@ -1527,11 +1539,11 @@ yyreduce:
                     }
                 }
             }
-#line 1531 "miniC.tab.c"
+#line 1543 "miniC.tab.c"
     break;
 
   case 32: /* read_list: read_list "," "identifier"  */
-#line 171 "miniC.y"
+#line 189 "miniC.y"
                              {
                // comprobamos que el id existe y no es una constante
                 PosicionLista p = buscaLS(l, (yyvsp[0].cadena));
@@ -1546,47 +1558,47 @@ yyreduce:
                     }
                 }
             }
-#line 1550 "miniC.tab.c"
-    break;
-
-  case 33: /* expression: expression "+" expression  */
-#line 187 "miniC.y"
-                                       {}
-#line 1556 "miniC.tab.c"
-    break;
-
-  case 34: /* expression: expression "-" expression  */
-#line 188 "miniC.y"
-                                       {}
 #line 1562 "miniC.tab.c"
     break;
 
-  case 35: /* expression: expression "*" expression  */
-#line 189 "miniC.y"
-                                       {}
+  case 33: /* expression: expression "+" expression  */
+#line 205 "miniC.y"
+                                       {(yyval.num)=expresion_bin("add", (yyvsp[-2].num), (yyvsp[0].num));}
 #line 1568 "miniC.tab.c"
     break;
 
-  case 36: /* expression: expression "/" expression  */
-#line 190 "miniC.y"
-                                       {}
+  case 34: /* expression: expression "-" expression  */
+#line 206 "miniC.y"
+                                       {(yyval.num)=expresion_bin("res", (yyvsp[-2].num),(yyvsp[0].num));}
 #line 1574 "miniC.tab.c"
     break;
 
-  case 37: /* expression: "-" expression  */
-#line 191 "miniC.y"
-                                         {}
+  case 35: /* expression: expression "*" expression  */
+#line 207 "miniC.y"
+                                       {(yyval.num)=expresion_bin("sum", (yyvsp[-2].num),(yyvsp[0].num));}
 #line 1580 "miniC.tab.c"
     break;
 
-  case 38: /* expression: "(" expression ")"  */
-#line 192 "miniC.y"
-                                {}
+  case 36: /* expression: expression "/" expression  */
+#line 208 "miniC.y"
+                                       {(yyval.num)=expresion_bin("div", (yyvsp[-2].num),(yyvsp[0].num));}
 #line 1586 "miniC.tab.c"
     break;
 
+  case 37: /* expression: "-" expression  */
+#line 209 "miniC.y"
+                                         {}
+#line 1592 "miniC.tab.c"
+    break;
+
+  case 38: /* expression: "(" expression ")"  */
+#line 210 "miniC.y"
+                                {}
+#line 1598 "miniC.tab.c"
+    break;
+
   case 39: /* expression: "identifier"  */
-#line 193 "miniC.y"
+#line 211 "miniC.y"
                 {
                // comprobamos que el id existe y no es una constante
                 PosicionLista p = buscaLS(l, (yyvsp[0].cadena));
@@ -1595,17 +1607,17 @@ yyreduce:
                     errores++;
                 }
             }
-#line 1599 "miniC.tab.c"
+#line 1611 "miniC.tab.c"
     break;
 
   case 40: /* expression: "number"  */
-#line 201 "miniC.y"
+#line 219 "miniC.y"
                  {}
-#line 1605 "miniC.tab.c"
+#line 1617 "miniC.tab.c"
     break;
 
 
-#line 1609 "miniC.tab.c"
+#line 1621 "miniC.tab.c"
 
       default: break;
     }
@@ -1829,7 +1841,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 205 "miniC.y"
+#line 223 "miniC.y"
 
 
 void yyerror(const char *msg) {
@@ -1861,4 +1873,86 @@ void imprimirLS() {
           printf("_%s: .word %d\n", aux.nombre, aux.valor);
           p = siguienteLS(l, p);
      }
+}
+
+void inicializaRegs(){
+    for(int i=0; i<10; i++) 
+        registros[i] = false; 
+}
+
+char *obtenerReg(){
+    //buscar registro $tx libre
+    for(int i=0; i<10; i++){
+        if(registros[i]=false){
+            registros[i]=true;
+            char *reg;
+            asprintf(&reg, "$t%d", i);
+            return reg;
+        }
+    }
+    printf("Error: registros agotados\n");
+    exit(1);
+}
+void liberarReg(char *reg){
+    //reg == &tx
+    assert(reg[0] == '$');
+    assert(reg[1] == 't');
+    int idx = reg[2] - '0';
+    assert (idx >=0); 
+    assert (idx <=0); 
+    registros[idx] = false;  
+}
+
+ListaC expresion_num(char*num) {
+    ListaC codigo = creaLC();
+    Operacion o; 
+    o.op = "li"; 
+    o.res = obtenerReg(); 
+    o.arg1 = num; 
+    o.arg2 = NULL; 
+    insertaLC(codigo, finalLC(codigo),o); 
+    guardaResLC(codigo,o.res); 
+    return codigo; 
+}
+
+ListaC expresion_id(char*id) {
+    ListaC codigo = creaLC();
+    Operacion o; 
+    o.op = "lw"; 
+    o.res = obtenerReg(); 
+    asprintf(&(o.arg1), "_%s", id);
+    o.arg1 = id; 
+    o.arg2 = NULL; 
+    insertaLC(codigo, finalLC(codigo),o); 
+    guardaResLC(codigo,o.res); 
+    return codigo; 
+}
+
+ListaC expression_bin(char *op, ListaC expr1, ListaC expr2) {
+   ListaC codigo; 
+   codigo = expr1; 
+   concatenaLC(codigo, expr2);
+   Operacion o;
+   o.op=op;
+   o.res = recuperaResLC(expr1); 
+   o.arg1= recuperaResLC(expr1); 
+   o.arg2= recuperaResLC(expr2); 
+   insertaLC(codigo, finalLC(codigo),o); 
+   liberarReg(o.arg2);
+   return codigo; 
+}
+
+void imprimir_lc(ListaC codigo1){
+    PosicionListaC p = inicioLC(codigo1);
+    Operacion oper; 
+    while(p!=finalLC(codigo1)){
+        oper=recuperaLC(codigo1,p);
+        printf("%s", oper.op);
+        if(oper.res) printf(" %s", oper.res);
+        if(oper.arg1) printf(" %s", oper.arg1);
+        if(oper.arg2) printf(" %s", oper.arg2);
+        printf("\n");
+        p=siguienteLC(codigo1,p);
+        
+    }
 }

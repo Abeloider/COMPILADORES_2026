@@ -7,7 +7,7 @@ if (a)  print ("a","\n");
        else while (c)
             {
                   print ("c = ",c,"\n");
-                  b = c-2+1;
+                  c = c-2+1;
             }
   print ("Final","\n");
 }

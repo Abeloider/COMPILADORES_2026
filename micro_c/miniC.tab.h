@@ -44,6 +44,12 @@
 #if YYDEBUG
 extern int yydebug;
 #endif
+/* "%code requires" blocks.  */
+#line 33 "miniC.y"
+
+    #include "listacodigo.h"
+
+#line 53 "miniC.tab.h"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -88,12 +94,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 21 "miniC.y"
+#line 37 "miniC.y"
 
   int num;
+  ListaC codigo;
   char *cadena;
 
-#line 97 "miniC.tab.h"
+#line 104 "miniC.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
