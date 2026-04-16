@@ -1563,7 +1563,7 @@ yyreduce:
 
   case 33: /* expression: expression "+" expression  */
 #line 205 "miniC.y"
-                                       {(yyval.num)=expresion_bin("add", (yyvsp[-2].num), (yyvsp[0].num));}
+                                       {(yyval.num)=expresion_bin("add", (yyvsp[-2].num),(yyvsp[0].num));}
 #line 1568 "miniC.tab.c"
     break;
 

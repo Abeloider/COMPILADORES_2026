@@ -68,7 +68,8 @@
 
 
 /* Tipo de dato de los no terminales de la gramática */
-%type <num> expression
+%type <num> expression 
+%type <codigo> statement body declaration id_list id_decl statement_list print_list print_item read_list
 
 /* Asociatividad y precedencia 
      % left asociatividad izquierda 
@@ -152,8 +153,24 @@ statement : ID "=" expression ";" {
                         errores++;
                     }
                 }
+                // generacion de codigo de asignacion
+                verifica_id($1, true); {// comprobamos que el id existe y no es una constante
+                if (errores == 0) {
+                    $$ = $3; // el codigo de la expresion
+                    Operacion o; 
+                    o.oper = "sw";
+                    o.res = recuperaResLC($3); // el resultado de la expresion
+                    asprintf(&(o.arg1), "_%s", $1); // la direccion de la variable
+                    o.arg2 = NULL;
+                    insertaLC($$, finalLC($$), o); // añadimos la operacion al codigo
+                    liberarReg(o.res); // liberamos el registro usado por la expresion
+                }
+                } 
             }
-          | "{" statement_list "}"
+          | "{" statement_list "}" {
+            if (errores==0){
+                $$ = $2;
+            }}
           | IF "(" expression ")" statement ELSE statement
           | IF "(" expression ")" statement %prec NOELSE
           | WHILE "(" expression ")" statement
@@ -170,8 +187,27 @@ print_list : print_item
            | print_list "," print_item
            ;
 
-print_item : expression 
-          | STRING
+print_item : expression {}
+          | STRING {int idx = declarar_str($1);
+            if(errores=0){
+             $$=creaLC();   
+
+                o.op = "li": 
+                o.res = "$v0";
+                o.arg1 = "4"; 
+                o.arg2 = NULL;
+                insertaLC($$, finalLC($$), o);
+                o.op = "la";
+                o.res = "$a0";
+                asprintf(&(o.arg1), "_str%d", idx);
+                o.arg2 = NULL;
+                insertaLC($$, finalLC($$), o);
+                o.op = "syscall";
+                o.res = NULL;
+                o.arg1 = NULL;
+                o.arg2 = NULL;
+                insertaLC($$, finalLC($$), o);
+            }}
           ; 
 read_list : ID { 
                 PosicionLista p = buscaLS(l, $1);
@@ -253,6 +289,20 @@ void imprimirLS() {
      }
 }
 
+void verifivar_id(char *id, bool es_var){
+    else{
+        if(es_var){
+
+        }
+    }
+}
+
+char *nuevaEtiqueta() {
+ char *aux;
+ asprintf(&aux,”$l%d”,contador_etiq++);
+ return aux;
+}
+
 void inicializaRegs(){
     for(int i=0; i<10; i++) 
         registros[i] = false; 
@@ -281,6 +331,35 @@ void liberarReg(char *reg){
     registros[idx] = false;  
 }
 
+ListaC statement_while(ListaC expr, ListaC stat) {
+    char *etiq_inicio = nuevaEtiqueta();
+    char *etiq_fin = nuevaEtiqueta();
+    operacion o; 
+    o.op = etiq_inicio;
+    o.res = o.arg1 = o.arg2 = NULL;
+    ListaC codigo = creaLC();
+    insertaLC(codigo, finalLC(codigo), o);
+    concatenaLC(codigo, expr); // viene toda la expresion con su codigo 
+    o.op = "beqz";
+    o.res = recuperaResLC(expr); // el resultado de la expresion
+    o.arg1 = etiq_fin; // saltamos al final si la expresion es falsa
+    o.arg2 = NULL;
+    insertaLC(codigo, finalLC(codigo), o);
+    concatenaLC(codigo, stat); // viene todo el codigo del statement // parte verde 
+    o.op="b";
+    o.res = etiq_inicio; // volvemos al inicio del bucle
+    o.arg1 = o.arg2 = NULL;
+    insertaLC(codigo, finalLC(codigo), o);
+    o.op = etiq_fin; // etiqueta de fin del bucle
+    o.res = o.arg1 = o.arg2 = NULL;
+    insertaLC(codigo, finalLC(codigo), o);
+    liberarReg(recuperaResLC(expr)); // liberamos el registro usado por la expresion
+    liberarLc(expr); // liberamos el codigo de la expresion
+    liberarLC(stat); // liberamos el codigo del statement
+    return codigo;
+
+}
+
 ListaC expresion_num(char*num) {
     ListaC codigo = creaLC();
     Operacion o; 
@@ -306,7 +385,7 @@ ListaC expresion_id(char*id) {
     return codigo; 
 }
 
-ListaC expression_bin(char *op, ListaC expr1, ListaC expr2) {
+ListaC expresion_bin(char *op, ListaC expr1, ListaC expr2) {
    ListaC codigo; 
    codigo = expr1; 
    concatenaLC(codigo, expr2);
@@ -318,17 +397,21 @@ ListaC expression_bin(char *op, ListaC expr1, ListaC expr2) {
    insertaLC(codigo, finalLC(codigo),o); 
    liberarReg(o.arg2);
    return codigo; 
-}
-
+} 
 void imprimir_lc(ListaC codigo1){
     PosicionListaC p = inicioLC(codigo1);
     Operacion oper; 
     while(p!=finalLC(codigo1)){
         oper=recuperaLC(codigo1,p);
+        if(oper.op[0]=='$'){
+
+        }
+        else{
         printf("%s", oper.op);
         if(oper.res) printf(" %s", oper.res);
         if(oper.arg1) printf(" %s", oper.arg1);
         if(oper.arg2) printf(" %s", oper.arg2);
+        }
         printf("\n");
         p=siguienteLC(codigo1,p);
         
