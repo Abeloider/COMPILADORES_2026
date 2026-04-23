@@ -122,8 +122,8 @@ body : body declaration
      | %empty
      ;
 
-declaration : VAR {t = VARIABLE;} tipo id_list ";" 
-            | CONST {t = CONSTANTE;} tipo id_list ";"
+declaration : VAR {t = VARIABLE;} tipo id_list ";" {$$ = $3;}
+            | CONST {t = CONSTANTE;} tipo id_list ";" {$$ = $3;}
             ;
             
 tipo : INT
@@ -154,7 +154,7 @@ statement : ID "=" expression ";" {
                     }
                 }
                 // generacion de codigo de asignacion
-                verifica_id($1, true); {// comprobamos que el id existe y no es una constante
+                verificar_id($1, true); {// comprobamos que el id existe y no es una constante
                 if (errores == 0) {
                     $$ = $3; // el codigo de la expresion
                     Operacion o; 
@@ -189,10 +189,9 @@ print_list : print_item
 
 print_item : expression {}
           | STRING {int idx = declarar_str($1);
-            if(errores=0){
-             $$=creaLC();   
-
-                o.op = "li": 
+            if(errores==0){
+             $$=creaLC(); 
+                o.op = "li"; 
                 o.res = "$v0";
                 o.arg1 = "4"; 
                 o.arg2 = NULL;
@@ -278,6 +277,24 @@ void declarar_id(char *id, Tipo t) {
      }
 }
 
+
+void declarar_str(char *str) {
+    PosicionLista p = buscaLS(l, str);
+     if (p != finalLS(l)) {
+          printf ("error en linea %d: %s redeclarado\n", yylineno, str);
+          errores++;
+     }
+     else {
+          Simbolo s;
+          s.nombre = str; 
+          s.valor = 0;
+          s.tipo = t;
+          insertaLS(l, finalLS(l), s);
+     }
+}
+
+
+
 void imprimirLS() {
      printf(".data\n");
      PosicionLista p = inicioLS(l);
@@ -289,12 +306,13 @@ void imprimirLS() {
      }
 }
 
-void verifivar_id(char *id, bool es_var){
+void verificar_id(char *id, bool es_var){
     else{
         if(es_var){
-
-        }
-    }
+            printf("Error en linea %d: %s es una variable\n", yylineno, id);
+            errores++;
+        } 
+    } 
 }
 
 char *nuevaEtiqueta() {
