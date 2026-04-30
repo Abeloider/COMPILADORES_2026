@@ -86,7 +86,10 @@
      Lista l; 
      /*declaracion de la lista de simbolos*/
      void declarar_id(char *id, Tipo t); 
+     int declarar_str(char *str);
+     int contador_cadenas=0; // contador para cadenas
      void imprimirLS();
+     void verificar_id(char *id, bool es_var);
      //variable para deteerminar si el id es VAR o CONST 
      Tipo t;
 
@@ -99,7 +102,7 @@
      ListaC expresion_bin(char *op, ListaC expr1, ListaC expr2);
 
 
-#line 103 "miniC.tab.c"
+#line 106 "miniC.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -162,17 +165,15 @@ enum yysymbol_kind_t
   YYSYMBOL_32_2 = 32,                      /* $@2  */
   YYSYMBOL_body = 33,                      /* body  */
   YYSYMBOL_declaration = 34,               /* declaration  */
-  YYSYMBOL_35_3 = 35,                      /* $@3  */
-  YYSYMBOL_36_4 = 36,                      /* $@4  */
-  YYSYMBOL_tipo = 37,                      /* tipo  */
-  YYSYMBOL_id_list = 38,                   /* id_list  */
-  YYSYMBOL_id_decl = 39,                   /* id_decl  */
-  YYSYMBOL_statement = 40,                 /* statement  */
-  YYSYMBOL_statement_list = 41,            /* statement_list  */
-  YYSYMBOL_print_list = 42,                /* print_list  */
-  YYSYMBOL_print_item = 43,                /* print_item  */
-  YYSYMBOL_read_list = 44,                 /* read_list  */
-  YYSYMBOL_expression = 45                 /* expression  */
+  YYSYMBOL_tipo = 35,                      /* tipo  */
+  YYSYMBOL_id_list = 36,                   /* id_list  */
+  YYSYMBOL_id_decl = 37,                   /* id_decl  */
+  YYSYMBOL_statement = 38,                 /* statement  */
+  YYSYMBOL_statement_list = 39,            /* statement_list  */
+  YYSYMBOL_print_list = 40,                /* print_list  */
+  YYSYMBOL_print_item = 41,                /* print_item  */
+  YYSYMBOL_read_list = 42,                 /* read_list  */
+  YYSYMBOL_expression = 43                 /* expression  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -505,11 +506,11 @@ union yyalloc
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  29
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  17
+#define YYNNTS  15
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  40
+#define YYNRULES  38
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  86
+#define YYNSTATES  84
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   283
@@ -559,13 +560,12 @@ static const yytype_int8 yytranslate[] =
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_int16 yyrline[] =
 {
-       0,   106,   106,   107,   106,   119,   120,   121,   124,   124,
-     125,   125,   128,   130,   131,   133,   137,   142,   156,   157,
-     158,   159,   160,   161,   162,   165,   166,   169,   170,   173,
-     174,   176,   189,   205,   206,   207,   208,   209,   210,   211,
-     219
+       0,   109,   109,   111,   109,   123,   124,   125,   128,   129,
+     132,   134,   135,   137,   141,   146,   173,   177,   178,   179,
+     180,   181,   182,   185,   189,   192,   193,   196,   197,   218,
+     231,   247,   248,   249,   250,   251,   252,   253,   264
 };
 #endif
 
@@ -586,9 +586,9 @@ static const char *const yytname[] =
   "\"{\"", "\"}\"", "\",\"", "\"register\"", "\"print\"", "\"var\"",
   "\"const\"", "\"int\"", "\"if\"", "\"else\"", "\"while\"", "\"read\"",
   "\"void\"", "\"string\"", "\"identifier\"", "UMINUS", "NOELSE",
-  "$accept", "program", "$@1", "$@2", "body", "declaration", "$@3", "$@4",
-  "tipo", "id_list", "id_decl", "statement", "statement_list",
-  "print_list", "print_item", "read_list", "expression", YY_NULLPTR
+  "$accept", "program", "$@1", "$@2", "body", "declaration", "tipo",
+  "id_list", "id_decl", "statement", "statement_list", "print_list",
+  "print_item", "read_list", "expression", YY_NULLPTR
 };
 
 static const char *
@@ -598,7 +598,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-28)
+#define YYPACT_NINF (-29)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -612,15 +612,15 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -28,     5,    -1,   -28,    15,    29,    33,    26,   -28,    32,
-      36,   -28,   -28,    35,   -28,   -28,    45,    49,    51,    53,
-     -28,   -28,   -28,    50,   -28,     6,    41,    41,     8,     8,
-      39,     8,   -28,   -28,     8,   -28,     8,   -28,   -28,    -6,
-     -28,   100,   -28,    42,    42,    79,    86,   -28,    -3,    14,
-     -28,    93,    59,     6,     8,     8,     8,     8,    63,    11,
-     -28,    12,    55,    55,    69,    54,   -28,   -28,   -28,   -28,
-      30,    30,   -28,   -28,     8,   -28,    42,   -28,    65,   -28,
-     -28,   -28,   100,   -28,    55,   -28
+     -29,    14,   -18,   -29,    -2,    18,    16,    35,   -29,    32,
+      28,   -29,   -29,    48,    34,    34,    52,    56,    61,    63,
+     -29,   -29,   -29,    50,   -29,     9,   -29,    49,    49,    11,
+      11,    55,    11,   -29,   -29,    11,   -29,    11,   -29,   -29,
+      -6,   -29,    95,    71,    26,   -29,    29,    74,    81,   -29,
+      -4,    17,   -29,    88,    78,     9,    11,    11,    11,    11,
+      11,   -29,    49,   -29,    45,    45,    79,    69,   -29,   -29,
+     -29,   -29,     6,     6,   -29,   -29,    95,   -29,    75,   -29,
+     -29,   -29,    45,   -29
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -629,28 +629,28 @@ static const yytype_int8 yypact[] =
 static const yytype_int8 yydefact[] =
 {
        2,     0,     0,     1,     0,     0,     0,     0,     7,     0,
-       0,    26,     3,     0,     8,    10,     0,     0,     0,     0,
-       5,     6,    24,     0,     4,     0,     0,     0,     0,     0,
-       0,     0,    18,    25,     0,    40,     0,    30,    39,     0,
-      27,    29,    12,     0,     0,     0,     0,    31,     0,     0,
-      37,     0,     0,     0,     0,     0,     0,     0,    15,     0,
-      13,     0,     0,     0,     0,     0,    17,    38,    22,    28,
-      33,    34,    35,    36,     0,     9,     0,    11,    20,    21,
-      23,    32,    16,    14,     0,    19
+       0,    24,     3,     0,     0,     0,     0,     0,     0,     0,
+       5,     6,    22,     0,     4,     0,    10,     0,     0,     0,
+       0,     0,     0,    16,    23,     0,    38,     0,    28,    37,
+       0,    25,    27,    13,     0,    11,     0,     0,     0,    29,
+       0,     0,    35,     0,     0,     0,     0,     0,     0,     0,
+       0,     8,     0,     9,     0,     0,     0,     0,    15,    36,
+      20,    26,    31,    32,    33,    34,    14,    12,    18,    19,
+      21,    30,     0,    17
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -28,   -28,   -28,   -28,   -28,   -28,   -28,   -28,    60,    56,
-      17,   -23,   -28,   -28,    48,   -28,   -27
+     -29,   -29,   -29,   -29,   -29,   -29,    87,    76,    41,   -23,
+     -29,   -29,    51,   -29,   -28
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     1,     2,    24,     9,    20,    26,    27,    43,    59,
-      60,    21,    23,    39,    40,    48,    41
+       0,     1,     2,    24,     9,    20,    27,    44,    45,    21,
+      23,    40,    41,    50,    42
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -658,32 +658,32 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      33,    45,    46,    52,    49,     3,    64,    50,    53,    51,
-      34,    65,    34,    35,    36,    35,    36,    54,    55,    56,
-      57,    75,    77,     4,    66,    76,    76,    70,    71,    72,
-      73,    37,    38,    10,    38,    56,    57,     6,     8,    78,
-      79,     5,     7,    25,    11,    12,    22,    82,    13,    14,
-      15,    10,    16,    28,    17,    18,    10,    29,    19,    30,
-      42,    85,    11,    32,    31,    47,    13,    11,    58,    68,
-      16,    13,    17,    18,    74,    16,    19,    17,    18,    80,
-      81,    19,    54,    55,    56,    57,    84,    44,    62,    54,
-      55,    56,    57,    83,     0,    63,    54,    55,    56,    57,
-      61,    69,    67,    54,    55,    56,    57
+      34,    47,    48,    54,    51,    66,     4,    52,    55,    53,
+      67,    58,    59,    35,     3,    35,    36,    37,    36,    37,
+      56,    57,    58,    59,     5,     7,     6,    68,    72,    73,
+      74,    75,    76,    10,    38,    39,    61,    39,    22,    63,
+      62,    78,    79,    62,    11,    12,    10,     8,    13,    14,
+      15,    10,    16,    26,    17,    18,    25,    11,    19,    83,
+      29,    13,    11,    33,    30,    16,    13,    17,    18,    31,
+      16,    19,    17,    18,    32,    43,    19,    56,    57,    58,
+      59,    49,    60,    64,    56,    57,    58,    59,    70,    80,
+      65,    56,    57,    58,    59,    81,    82,    69,    56,    57,
+      58,    59,    28,    77,    46,     0,    71
 };
 
 static const yytype_int8 yycheck[] =
 {
-      23,    28,    29,     9,    31,     0,     9,    34,    14,    36,
-       4,    14,     4,     7,     8,     7,     8,     3,     4,     5,
-       6,    10,    10,    24,    10,    14,    14,    54,    55,    56,
-      57,    25,    26,     1,    26,     5,     6,     8,    12,    62,
-      63,    26,     9,     8,    12,    13,    10,    74,    16,    17,
-      18,     1,    20,     8,    22,    23,     1,     8,    26,     8,
-      19,    84,    12,    13,    11,    26,    16,    12,    26,    10,
-      20,    16,    22,    23,    11,    20,    26,    22,    23,    10,
-      26,    26,     3,     4,     5,     6,    21,    27,     9,     3,
-       4,     5,     6,    76,    -1,     9,     3,     4,     5,     6,
-      44,    53,     9,     3,     4,     5,     6
+      23,    29,    30,     9,    32,     9,    24,    35,    14,    37,
+      14,     5,     6,     4,     0,     4,     7,     8,     7,     8,
+       3,     4,     5,     6,    26,     9,     8,    10,    56,    57,
+      58,    59,    60,     1,    25,    26,    10,    26,    10,    10,
+      14,    64,    65,    14,    12,    13,     1,    12,    16,    17,
+      18,     1,    20,    19,    22,    23,     8,    12,    26,    82,
+       8,    16,    12,    13,     8,    20,    16,    22,    23,     8,
+      20,    26,    22,    23,    11,    26,    26,     3,     4,     5,
+       6,    26,    11,     9,     3,     4,     5,     6,    10,    10,
+       9,     3,     4,     5,     6,    26,    21,     9,     3,     4,
+       5,     6,    15,    62,    28,    -1,    55
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -692,33 +692,31 @@ static const yytype_int8 yystos[] =
 {
        0,    30,    31,     0,    24,    26,     8,     9,    12,    33,
        1,    12,    13,    16,    17,    18,    20,    22,    23,    26,
-      34,    40,    10,    41,    32,     8,    35,    36,     8,     8,
-       8,    11,    13,    40,     4,     7,     8,    25,    26,    42,
-      43,    45,    19,    37,    37,    45,    45,    26,    44,    45,
-      45,    45,     9,    14,     3,     4,     5,     6,    26,    38,
-      39,    38,     9,     9,     9,    14,    10,     9,    10,    43,
-      45,    45,    45,    45,    11,    10,    14,    10,    40,    40,
-      10,    26,    45,    39,    21,    40
+      34,    38,    10,    39,    32,     8,    19,    35,    35,     8,
+       8,     8,    11,    13,    38,     4,     7,     8,    25,    26,
+      40,    41,    43,    26,    36,    37,    36,    43,    43,    26,
+      42,    43,    43,    43,     9,    14,     3,     4,     5,     6,
+      11,    10,    14,    10,     9,     9,     9,    14,    10,     9,
+      10,    41,    43,    43,    43,    43,    43,    37,    38,    38,
+      10,    26,    21,    38
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    29,    31,    32,    30,    33,    33,    33,    35,    34,
-      36,    34,    37,    38,    38,    39,    39,    40,    40,    40,
-      40,    40,    40,    40,    40,    41,    41,    42,    42,    43,
-      43,    44,    44,    45,    45,    45,    45,    45,    45,    45,
-      45
+       0,    29,    31,    32,    30,    33,    33,    33,    34,    34,
+      35,    36,    36,    37,    37,    38,    38,    38,    38,    38,
+      38,    38,    38,    39,    39,    40,    40,    41,    41,    42,
+      42,    43,    43,    43,    43,    43,    43,    43,    43
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     0,     0,     9,     2,     2,     0,     0,     5,
-       0,     5,     1,     1,     3,     1,     3,     4,     3,     7,
-       5,     5,     5,     5,     2,     2,     0,     1,     3,     1,
-       1,     1,     3,     3,     3,     3,     3,     2,     3,     1,
-       1
+       0,     2,     0,     0,     9,     2,     2,     0,     4,     4,
+       1,     1,     3,     1,     3,     4,     3,     7,     5,     5,
+       5,     5,     2,     2,     0,     1,     3,     1,     1,     1,
+       3,     3,     3,     3,     3,     2,     3,     1,     1
 };
 
 
@@ -1452,61 +1450,62 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* $@1: %empty  */
-#line 106 "miniC.y"
-          {l = creaLS(); }
-#line 1458 "miniC.tab.c"
+#line 109 "miniC.y"
+          { l = creaLS(); 
+            inicializaRegs();}
+#line 1457 "miniC.tab.c"
     break;
 
   case 3: /* $@2: %empty  */
-#line 107 "miniC.y"
+#line 111 "miniC.y"
                                         { // comprobamos que el id es main
                if (strcmp((yyvsp[-5].cadena), "main") != 0) {
                    printf("Error en linea %d: la funcion debe llamarse 'main'\n", yylineno);
                    errores++;
                }
            }
-#line 1469 "miniC.tab.c"
+#line 1468 "miniC.tab.c"
     break;
 
   case 4: /* program: $@1 "void" "identifier" "(" ")" "{" body "}" $@2  */
-#line 113 "miniC.y"
+#line 117 "miniC.y"
            {if (errores ==0) {
                imprimirLS();}
            liberaLS(l);}
-#line 1477 "miniC.tab.c"
+#line 1476 "miniC.tab.c"
     break;
 
-  case 8: /* $@3: %empty  */
-#line 124 "miniC.y"
-                  {t = VARIABLE;}
-#line 1483 "miniC.tab.c"
+  case 8: /* declaration: "var" tipo id_list ";"  */
+#line 128 "miniC.y"
+                                    {(yyval.codigo)=(yyvsp[-1].codigo);}
+#line 1482 "miniC.tab.c"
     break;
 
-  case 10: /* $@4: %empty  */
-#line 125 "miniC.y"
-                    {t = CONSTANTE;}
-#line 1489 "miniC.tab.c"
+  case 9: /* declaration: "const" tipo id_list ";"  */
+#line 129 "miniC.y"
+                                      {(yyval.codigo)=(yyvsp[-1].codigo);}
+#line 1488 "miniC.tab.c"
     break;
 
-  case 15: /* id_decl: "identifier"  */
-#line 133 "miniC.y"
+  case 13: /* id_decl: "identifier"  */
+#line 137 "miniC.y"
              {
              // declaramos una funcion con dos parametros
              declarar_id((yyvsp[0].cadena),t); 
           }
-#line 1498 "miniC.tab.c"
+#line 1497 "miniC.tab.c"
     break;
 
-  case 16: /* id_decl: "identifier" "=" expression  */
-#line 137 "miniC.y"
+  case 14: /* id_decl: "identifier" "=" expression  */
+#line 141 "miniC.y"
                             {
-          declarar_id((yyvsp[-2].cadena),t); 
+          declarar_id((yyvsp[-2].cadena),t);
           }
-#line 1506 "miniC.tab.c"
+#line 1505 "miniC.tab.c"
     break;
 
-  case 17: /* statement: "identifier" "=" expression ";"  */
-#line 142 "miniC.y"
+  case 15: /* statement: "identifier" "=" expression ";"  */
+#line 146 "miniC.y"
                                   {
                 PosicionLista p = buscaLS(l, (yyvsp[-3].cadena));
                 // comprobamos que el id existe y no es una constante
@@ -1520,12 +1519,73 @@ yyreduce:
                         errores++;
                     }
                 }
+                // generacion de codigo de asignacion
+                verificar_id((yyvsp[-3].cadena), true); {// comprobamos que el id existe y no es una constante
+                if (errores == 0) {
+                    (yyval.codigo) = (yyvsp[-1].codigo); // el codigo de la expresion
+                    Operacion o; 
+                    o.op = "sw";
+                    o.res = recuperaResLC((yyvsp[-1].codigo)); // el resultado de la expresion
+                    asprintf(&(o.arg1), "_%s", (yyvsp[-3].cadena)); // la direccion de la variable
+                    o.arg2 = NULL;
+                    insertaLC((yyval.codigo), finalLC((yyval.codigo)), o); // añadimos la operacion al codigo
+                    liberarReg(o.res); // liberamos el registro usado por la expresion
+                }
+                } 
             }
-#line 1525 "miniC.tab.c"
+#line 1537 "miniC.tab.c"
     break;
 
-  case 31: /* read_list: "identifier"  */
-#line 176 "miniC.y"
+  case 16: /* statement: "{" statement_list "}"  */
+#line 173 "miniC.y"
+                                   {
+            if (errores==0){
+                (yyval.codigo) = (yyvsp[-1].codigo);
+            }}
+#line 1546 "miniC.tab.c"
+    break;
+
+  case 23: /* statement_list: statement_list statement  */
+#line 185 "miniC.y"
+                                          {
+                    
+}
+#line 1554 "miniC.tab.c"
+    break;
+
+  case 27: /* print_item: expression  */
+#line 196 "miniC.y"
+                        {(yyval.codigo) = (yyvsp[0].codigo);}
+#line 1560 "miniC.tab.c"
+    break;
+
+  case 28: /* print_item: "string"  */
+#line 197 "miniC.y"
+                   {int idx = declarar_str((yyvsp[0].cadena));
+            if(errores==0){
+             (yyval.codigo)=creaLC(); 
+             Operacion o;
+                o.op = "li"; 
+                o.res = "$v0";
+                o.arg1 = "4"; 
+                o.arg2 = NULL;
+                insertaLC((yyval.codigo), finalLC((yyval.codigo)), o);
+                o.op = "la";
+                o.res = "$a0";
+                asprintf(&(o.arg1), "_str%d", idx);
+                o.arg2 = NULL;
+                insertaLC((yyval.codigo), finalLC((yyval.codigo)), o);
+                o.op = "syscall";
+                o.res = NULL;
+                o.arg1 = NULL;
+                o.arg2 = NULL;
+                insertaLC((yyval.codigo), finalLC((yyval.codigo)), o);
+            }}
+#line 1585 "miniC.tab.c"
+    break;
+
+  case 29: /* read_list: "identifier"  */
+#line 218 "miniC.y"
                { 
                 PosicionLista p = buscaLS(l, (yyvsp[0].cadena));
                 if (p == finalLS(l)) {
@@ -1539,11 +1599,11 @@ yyreduce:
                     }
                 }
             }
-#line 1543 "miniC.tab.c"
+#line 1603 "miniC.tab.c"
     break;
 
-  case 32: /* read_list: read_list "," "identifier"  */
-#line 189 "miniC.y"
+  case 30: /* read_list: read_list "," "identifier"  */
+#line 231 "miniC.y"
                              {
                // comprobamos que el id existe y no es una constante
                 PosicionLista p = buscaLS(l, (yyvsp[0].cadena));
@@ -1558,66 +1618,71 @@ yyreduce:
                     }
                 }
             }
-#line 1562 "miniC.tab.c"
+#line 1622 "miniC.tab.c"
     break;
 
-  case 33: /* expression: expression "+" expression  */
-#line 205 "miniC.y"
-                                       {(yyval.num)=expresion_bin("add", (yyvsp[-2].num),(yyvsp[0].num));}
-#line 1568 "miniC.tab.c"
+  case 31: /* expression: expression "+" expression  */
+#line 247 "miniC.y"
+                                       {(yyval.codigo)=expresion_bin("add", (yyvsp[-2].codigo),(yyvsp[0].codigo));}
+#line 1628 "miniC.tab.c"
     break;
 
-  case 34: /* expression: expression "-" expression  */
-#line 206 "miniC.y"
-                                       {(yyval.num)=expresion_bin("res", (yyvsp[-2].num),(yyvsp[0].num));}
-#line 1574 "miniC.tab.c"
+  case 32: /* expression: expression "-" expression  */
+#line 248 "miniC.y"
+                                       {(yyval.codigo)=expresion_bin("res", (yyvsp[-2].codigo),(yyvsp[0].codigo));}
+#line 1634 "miniC.tab.c"
     break;
 
-  case 35: /* expression: expression "*" expression  */
-#line 207 "miniC.y"
-                                       {(yyval.num)=expresion_bin("sum", (yyvsp[-2].num),(yyvsp[0].num));}
-#line 1580 "miniC.tab.c"
+  case 33: /* expression: expression "*" expression  */
+#line 249 "miniC.y"
+                                       {(yyval.codigo)=expresion_bin("sum", (yyvsp[-2].codigo),(yyvsp[0].codigo));}
+#line 1640 "miniC.tab.c"
     break;
 
-  case 36: /* expression: expression "/" expression  */
-#line 208 "miniC.y"
-                                       {(yyval.num)=expresion_bin("div", (yyvsp[-2].num),(yyvsp[0].num));}
-#line 1586 "miniC.tab.c"
+  case 34: /* expression: expression "/" expression  */
+#line 250 "miniC.y"
+                                       {(yyval.codigo)=expresion_bin("div", (yyvsp[-2].codigo),(yyvsp[0].codigo));}
+#line 1646 "miniC.tab.c"
     break;
 
-  case 37: /* expression: "-" expression  */
-#line 209 "miniC.y"
+  case 35: /* expression: "-" expression  */
+#line 251 "miniC.y"
                                          {}
-#line 1592 "miniC.tab.c"
+#line 1652 "miniC.tab.c"
     break;
 
-  case 38: /* expression: "(" expression ")"  */
-#line 210 "miniC.y"
+  case 36: /* expression: "(" expression ")"  */
+#line 252 "miniC.y"
                                 {}
-#line 1598 "miniC.tab.c"
+#line 1658 "miniC.tab.c"
     break;
 
-  case 39: /* expression: "identifier"  */
-#line 211 "miniC.y"
+  case 37: /* expression: "identifier"  */
+#line 253 "miniC.y"
                 {
                // comprobamos que el id existe y no es una constante
+               verificar_id((yyvsp[0].cadena), false);
+               (yyval.codigo) = expresion_id((yyvsp[0].cadena)); // generamos el codigo de acceso a la varible
+
                 PosicionLista p = buscaLS(l, (yyvsp[0].cadena));
                 if (p == finalLS(l)) {
                     printf("Error en linea %d: %s no declarado\n", yylineno, (yyvsp[0].cadena));
                     errores++;
                 }
             }
-#line 1611 "miniC.tab.c"
+#line 1674 "miniC.tab.c"
     break;
 
-  case 40: /* expression: "number"  */
-#line 219 "miniC.y"
-                 {}
-#line 1617 "miniC.tab.c"
+  case 38: /* expression: "number"  */
+#line 264 "miniC.y"
+                 {
+                (yyval.codigo) = expresion_num((yyvsp[0].cadena)); // generamos el codigo de cargar el numero en un registro
+           }
+#line 1682 "miniC.tab.c"
     break;
 
 
-#line 1621 "miniC.tab.c"
+#line 1686 "miniC.tab.c"
 
       default: break;
     }
@@ -1841,7 +1906,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 223 "miniC.y"
+#line 270 "miniC.y"
 
 
 void yyerror(const char *msg) {
@@ -1864,6 +1929,26 @@ void declarar_id(char *id, Tipo t) {
      }
 }
 
+
+int declarar_str(char *str) {
+    PosicionLista p = buscaLS(l, str);
+     if (p != finalLS(l)) {
+        Simbolo s = recuperaLS(l, p);
+        return s.valor; // devolvemos el indice de la cadena ya declarada
+     }
+     else {
+          Simbolo s;
+          s.nombre = str; 
+          s.valor = contador_cadenas++;
+          s.tipo = CADENA;
+          insertaLS(l, finalLS(l), s);
+          contador_cadenas++;
+          return s.valor; // devolvemos el indice de la nueva cadena
+     }
+}
+
+
+
 void imprimirLS() {
      printf(".data\n");
      PosicionLista p = inicioLS(l);
@@ -1875,6 +1960,28 @@ void imprimirLS() {
      }
 }
 
+void verificar_id(char *id, bool es_var){
+    PosicionLista p = buscaLS(l, id);
+    if (p == finalLS(l)) {
+            printf("Error en linea %d: %s no declarado\n", yylineno, id);
+            errores++;
+    }else{
+        if(es_var){
+            Simbolo s = recuperaLS(l, p);
+            if (s.tipo == CONSTANTE) {
+                printf("Error en linea %d: %s es una constante\n", yylineno, id);
+                errores++;
+            }
+        } 
+    }
+}
+
+char *nuevaEtiqueta() {
+ char *aux;
+ asprintf(&aux,"$l%d",contador_cadenas++);
+ return aux;
+}
+
 void inicializaRegs(){
     for(int i=0; i<10; i++) 
         registros[i] = false; 
@@ -1883,7 +1990,7 @@ void inicializaRegs(){
 char *obtenerReg(){
     //buscar registro $tx libre
     for(int i=0; i<10; i++){
-        if(registros[i]=false){
+        if(registros[i]==false){
             registros[i]=true;
             char *reg;
             asprintf(&reg, "$t%d", i);
@@ -1898,9 +2005,38 @@ void liberarReg(char *reg){
     assert(reg[0] == '$');
     assert(reg[1] == 't');
     int idx = reg[2] - '0';
-    assert (idx >=0); 
-    assert (idx <=0); 
+    assert (idx >= 0); 
+    assert (idx <= 9); 
     registros[idx] = false;  
+}
+
+ListaC statement_while(ListaC expr, ListaC stat) {
+    char *etiq_inicio = nuevaEtiqueta();
+    char *etiq_fin = nuevaEtiqueta();
+    Operacion o; 
+    o.op = etiq_inicio;
+    o.res = o.arg1 = o.arg2 = NULL;
+    ListaC codigo = creaLC();
+    insertaLC(codigo, finalLC(codigo), o);
+    concatenaLC(codigo, expr); // viene toda la expresion con su codigo 
+    o.op = "beqz";
+    o.res = recuperaResLC(expr); // el resultado de la expresion
+    o.arg1 = etiq_fin; // saltamos al final si la expresion es falsa
+    o.arg2 = NULL;
+    insertaLC(codigo, finalLC(codigo), o);
+    concatenaLC(codigo, stat); // viene todo el codigo del statement // parte verde 
+    o.op="b";
+    o.res = etiq_inicio; // volvemos al inicio del bucle
+    o.arg1 = o.arg2 = NULL;
+    insertaLC(codigo, finalLC(codigo), o);
+    o.op = etiq_fin; // etiqueta de fin del bucle
+    o.res = o.arg1 = o.arg2 = NULL;
+    insertaLC(codigo, finalLC(codigo), o);
+    liberarReg(recuperaResLC(expr)); // liberamos el registro usado por la expresion
+    liberaLC(expr); // liberamos el codigo de la expresion
+    liberaLC(stat); // liberamos el codigo del statement
+    return codigo;
+
 }
 
 ListaC expresion_num(char*num) {
@@ -1928,7 +2064,7 @@ ListaC expresion_id(char*id) {
     return codigo; 
 }
 
-ListaC expression_bin(char *op, ListaC expr1, ListaC expr2) {
+ListaC expresion_bin(char *op, ListaC expr1, ListaC expr2) {
    ListaC codigo; 
    codigo = expr1; 
    concatenaLC(codigo, expr2);
@@ -1940,17 +2076,21 @@ ListaC expression_bin(char *op, ListaC expr1, ListaC expr2) {
    insertaLC(codigo, finalLC(codigo),o); 
    liberarReg(o.arg2);
    return codigo; 
-}
-
+} 
 void imprimir_lc(ListaC codigo1){
     PosicionListaC p = inicioLC(codigo1);
     Operacion oper; 
     while(p!=finalLC(codigo1)){
         oper=recuperaLC(codigo1,p);
+        if(oper.op[0]=='$'){
+
+        }
+        else{
         printf("%s", oper.op);
         if(oper.res) printf(" %s", oper.res);
         if(oper.arg1) printf(" %s", oper.arg1);
         if(oper.arg2) printf(" %s", oper.arg2);
+        }
         printf("\n");
         p=siguienteLC(codigo1,p);
         
