@@ -1,19 +1,13 @@
 void main() {
     var int a;
-    
     print("Inicio de la prueba IF\n");
-
-    // Prueba 1: 'a' vale 1 (Verdadero, debe entrar)
     a = 1;
     if (a) {
         print("Exito: Entro al primer IF porque 'a' es 1\n");
     }
-
-    // Prueba 2: 'a' vale 0 (Falso, NO debe entrar)
     a = 0;
     if (a) {
         print("Error: No deberia imprimir esto porque 'a' es 0\n");
     }
-
     print("Fin de la prueba\n");
 }

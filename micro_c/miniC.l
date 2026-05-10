@@ -6,7 +6,7 @@
     
     int inicio_comentario = 0;
     int errores=0; // hacemos un contador de errores errores++ 
-    long long MAX_ENTERO = 2147483648L; 
+    long long MAX_ENTERO = 21474836487; // 
 
 %}
 
@@ -81,12 +81,14 @@ panico [^a-zA-Z_$'0-9'\.*/ \t\n\r"(){}]+
 \"([^"\n\\]|\\["ntr])*\"    { 
                                  yylval.cadena = strdup(yytext);
                                  return STRING; }
-\"([^"\n\\]|\\[\"ntr])*     { printf("Cadena de caracteres no cerrada en línea %d %s\n",
-                                        yylineno, yytext); }
-.                           { printf("Error: simbolo no reconocido %d %s\n",
-                                        yylineno, yytext); } 
+\"([^"\n\\]|\\[\"ntr])*     { printf("Error léxico: Cadena de caracteres no cerrada en línea %d %s\n",
+                                        yylineno, yytext);
+                                        errores++;}
+.                           { printf("Error léxico: símbolo no reconocido en la linea %d %s\n",
+                                        yylineno, yytext);
+                                        errores++;} 
 
-{panico}                   { printf("Error en linea %d %s\n",
+{panico}                   { printf("Error léxico: símbolos no reconocido en la linea %d %s\n",
                                         yylineno, yytext); }
 
 %%

@@ -575,8 +575,8 @@ static const yytype_int16 yyrline[] =
        0,   116,   116,   118,   116,   134,   139,   144,   147,   147,
      148,   148,   151,   153,   154,   160,   165,   178,   192,   193,
      194,   195,   196,   197,   198,   201,   206,   209,   210,   217,
-     242,   264,   288,   313,   314,   315,   316,   317,   318,   319,
-     330
+     242,   264,   288,   313,   314,   315,   316,   317,   328,   329,
+     334
 };
 #endif
 
@@ -1814,42 +1814,46 @@ yyreduce:
 
   case 37: /* expression: "-" expression  */
 #line 317 "miniC.y"
-                                         {}
-#line 1819 "miniC.tab.c"
+                                         { 
+                (yyval.codigo) = (yyvsp[0].codigo); // el codigo de la expresion
+                Operacion o;
+                o.op = "neg";
+                o.res = obtenerReg(); 
+                o.arg1 = recuperaResLC((yyvsp[0].codigo)); 
+                o.arg2 = NULL;
+                insertaLC((yyval.codigo), finalLC((yyval.codigo)), o); 
+                liberarReg(o.arg1); 
+                guardaResLC((yyval.codigo), o.res);
+           }
+#line 1829 "miniC.tab.c"
     break;
 
   case 38: /* expression: "(" expression ")"  */
-#line 318 "miniC.y"
+#line 328 "miniC.y"
                                 {}
-#line 1825 "miniC.tab.c"
+#line 1835 "miniC.tab.c"
     break;
 
   case 39: /* expression: "identifier"  */
-#line 319 "miniC.y"
+#line 329 "miniC.y"
                 {
                // comprobamos que el id existe y no es una constante
                verificar_id((yyvsp[0].cadena), false);
                (yyval.codigo) = expresion_id((yyvsp[0].cadena)); // generamos el codigo de acceso a la varible
-
-                PosicionLista p = buscaLS(l, (yyvsp[0].cadena));
-                if (p == finalLS(l)) {
-                    printf("Error en linea %d: %s no declarado\n", yylineno, (yyvsp[0].cadena));
-                    errores++;
-                }
             }
-#line 1841 "miniC.tab.c"
+#line 1845 "miniC.tab.c"
     break;
 
   case 40: /* expression: "number"  */
-#line 330 "miniC.y"
+#line 334 "miniC.y"
                  {
-                (yyval.codigo) = expresion_num((yyvsp[0].cadena)); // generamos el codigo de cargar el numero en un registro
+               (yyval.codigo) = expresion_num((yyvsp[0].cadena)); // generamos el codigo de cargar el numero en un registro
            }
-#line 1849 "miniC.tab.c"
+#line 1853 "miniC.tab.c"
     break;
 
 
-#line 1853 "miniC.tab.c"
+#line 1857 "miniC.tab.c"
 
       default: break;
     }
@@ -2073,7 +2077,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 336 "miniC.y"
+#line 340 "miniC.y"
 
 
 void yyerror(const char *msg) {
@@ -2099,7 +2103,7 @@ void declarar_id(char *id, Tipo t) {
 
 int declarar_str(char *str) {
           Simbolo s;
-          s.nombre = str; 
+          s.nombre = str;
           s.valor = contador_cadenas++;
           s.tipo = CADENA;
           insertaLS(l, finalLS(l), s);
@@ -2168,13 +2172,13 @@ void imprimirLC(ListaC codigo) {
 void verificar_id(char *id, bool es_var){
     PosicionLista p = buscaLS(l, id);
     if (p == finalLS(l)) {
-            printf("Error en linea %d: %s no declarado\n", yylineno, id);
+            printf("Error semántico en linea %d: %s no declarado\n", yylineno, id);
             errores++;
     }else{
         if(es_var){
             Simbolo s = recuperaLS(l, p);
             if (s.tipo == CONSTANTE) {
-                printf("Error en linea %d: %s es una constante\n", yylineno, id);
+                printf("Error semántico en linea %d: %s es una constante\n", yylineno, id);
                 errores++;
             }
         } 
@@ -2309,8 +2313,6 @@ ListaC statement_while(ListaC expr, ListaC stat) { // $3 $5
     liberaLC(stat); // liberamos el codigo del statement
     return codigo;
 }
-
-
 
 
 ListaC expresion_num(char*num) {

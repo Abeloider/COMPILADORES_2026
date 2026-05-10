@@ -314,21 +314,25 @@ expression : expression "+" expression {$$=expresion_bin("add", $1,$3);}
            | expression "-" expression {$$=expresion_bin("sub", $1,$3);}
            | expression "*" expression {$$=expresion_bin("mul", $1,$3);}
            | expression "/" expression {$$=expresion_bin("div", $1,$3);}                                   
-           | "-" expression %prec UMINUS {}
+           | "-" expression %prec UMINUS { 
+                $$ = $2; // el codigo de la expresion
+                Operacion o;
+                o.op = "neg";
+                o.res = obtenerReg(); 
+                o.arg1 = recuperaResLC($2); 
+                o.arg2 = NULL;
+                insertaLC($$, finalLC($$), o); 
+                liberarReg(o.arg1); 
+                guardaResLC($$, o.res);
+           }
            | "(" expression ")" {}
            | ID {
                // comprobamos que el id existe y no es una constante
                verificar_id($1, false);
                $$ = expresion_id($1); // generamos el codigo de acceso a la varible
-
-                PosicionLista p = buscaLS(l, $1);
-                if (p == finalLS(l)) {
-                    printf("Error en linea %d: %s no declarado\n", yylineno, $1);
-                    errores++;
-                }
             }
            | NUM {
-                $$ = expresion_num($1); // generamos el codigo de cargar el numero en un registro
+               $$ = expresion_num($1); // generamos el codigo de cargar el numero en un registro
            }
            ;
 
@@ -358,7 +362,7 @@ void declarar_id(char *id, Tipo t) {
 
 int declarar_str(char *str) {
           Simbolo s;
-          s.nombre = str; 
+          s.nombre = str;
           s.valor = contador_cadenas++;
           s.tipo = CADENA;
           insertaLS(l, finalLS(l), s);
@@ -427,13 +431,13 @@ void imprimirLC(ListaC codigo) {
 void verificar_id(char *id, bool es_var){
     PosicionLista p = buscaLS(l, id);
     if (p == finalLS(l)) {
-            printf("Error en linea %d: %s no declarado\n", yylineno, id);
+            printf("Error semántico en linea %d: %s no declarado\n", yylineno, id);
             errores++;
     }else{
         if(es_var){
             Simbolo s = recuperaLS(l, p);
             if (s.tipo == CONSTANTE) {
-                printf("Error en linea %d: %s es una constante\n", yylineno, id);
+                printf("Error semántico en linea %d: %s es una constante\n", yylineno, id);
                 errores++;
             }
         } 
@@ -568,8 +572,6 @@ ListaC statement_while(ListaC expr, ListaC stat) { // $3 $5
     liberaLC(stat); // liberamos el codigo del statement
     return codigo;
 }
-
-
 
 
 ListaC expresion_num(char*num) {

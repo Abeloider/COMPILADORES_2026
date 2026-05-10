@@ -522,7 +522,7 @@ char *yytext;
     
     int inicio_comentario = 0;
     int errores=0; // hacemos un contador de errores errores++ 
-    long long MAX_ENTERO = 2147483648L; 
+    long long MAX_ENTERO = 21474836487; // 
 
 #line 528 "lex.yy.c"
 /*DEFINICIONES DE MACROS DE EXPRESIONES REGULARES*/
@@ -994,27 +994,29 @@ YY_RULE_SETUP
 case 29:
 YY_RULE_SETUP
 #line 84 "miniC.l"
-{ printf("Cadena de caracteres no cerrada en línea %d %s\n",
-                                        yylineno, yytext); }
+{ printf("Error léxico: Cadena de caracteres no cerrada en línea %d %s\n",
+                                        yylineno, yytext);
+                                        errores++;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 86 "miniC.l"
-{ printf("Error: simbolo no reconocido %d %s\n",
-                                        yylineno, yytext); } 
+#line 87 "miniC.l"
+{ printf("Error léxico: símbolo no reconocido en la linea %d %s\n",
+                                        yylineno, yytext);
+                                        errores++;} 
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 89 "miniC.l"
-{ printf("Error en linea %d %s\n",
+#line 91 "miniC.l"
+{ printf("Error léxico: símbolos no reconocido en la linea %d %s\n",
                                         yylineno, yytext); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 92 "miniC.l"
+#line 94 "miniC.l"
 ECHO;
 	YY_BREAK
-#line 1018 "lex.yy.c"
+#line 1020 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2031,6 +2033,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 92 "miniC.l"
+#line 94 "miniC.l"
 
 
