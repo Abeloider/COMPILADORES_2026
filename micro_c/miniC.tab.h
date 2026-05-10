@@ -45,7 +45,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 36 "miniC.y"
+#line 44 "miniC.y"
 
     #include "listacodigo.h"
 
@@ -94,7 +94,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 40 "miniC.y"
+#line 48 "miniC.y"
 
   int num;
   ListaC codigo;
